@@ -271,8 +271,7 @@ let
 
         createTunDevice = i: nameValuePair "${i.name}-netdev"
           { description = "Virtual Network Interface ${i.name}";
-            bindsTo = [ "dev-net-tun.device" ];
-            after = [ "dev-net-tun.device" "network-pre.target" ];
+            after = [ "network-pre.target" ];
             wantedBy = [ "network-setup.service" (subsystemDevice i.name) ];
             partOf = [ "network-setup.service" ];
             before = [ "network-setup.service" ];
@@ -283,6 +282,7 @@ let
             };
             script = ''
               ip tuntap add dev "${i.name}" mode "${i.virtualType}" user "${i.virtualOwner}"
+              ip link set up dev "${i.name}"
             '';
             postStop = ''
               ip link del ${i.name} || true
