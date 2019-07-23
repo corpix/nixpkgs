@@ -1,4 +1,4 @@
-{ stdenv, cmake, fetchFromBitbucket, pkgconfig, qtbase, qttools, qtmultimedia, zlib, bzip2, xxd }:
+{ stdenv, cmake, fetchFromBitbucket, pkgconfig, qtbase, qttools, qtmultimedia, zlib, bzip2, xxd, wrapQtAppsHook }:
 
 stdenv.mkDerivation rec {
   name = "doomseeker-${version}";
@@ -15,9 +15,10 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ qtbase qtmultimedia zlib bzip2 ];
 
-  nativeBuildInputs = [ cmake qttools pkgconfig xxd ];
+  nativeBuildInputs = [ cmake qttools pkgconfig xxd wrapQtAppsHook ];
 
   enableParallelBuilding = true;
+  postInstall = "wrapQtApp $out/bin/doomseeker";
 
   NIX_CFLAGS_COMPILE = stdenv.lib.optional stdenv.cc.isClang "-Wno-error=format-security";
 
