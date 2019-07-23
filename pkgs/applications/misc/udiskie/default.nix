@@ -1,6 +1,6 @@
-{ lib, stdenv, fetchFromGitHub, asciidoc-full, gettext
-, gobject-introspection, gtk3, libappindicator-gtk3, libnotify, librsvg
-, udisks2, wrapGAppsHook
+{ stdenv, fetchFromGitHub, asciidoc-full, gettext
+, gobject-introspection, gtk3, hicolor-icon-theme, libappindicator-gtk3, libnotify, librsvg
+, udisks2, wrapGAppsHook, wrapQtAppsHook
 , python3Packages
 }:
 
@@ -19,10 +19,11 @@ python3Packages.buildPythonApplication rec {
     gettext
     asciidoc-full        # For building man page.
     gobject-introspection
-    wrapGAppsHook
+    wrapGAppsHook wrapQtAppsHook
   ];
 
   buildInputs = [
+    hicolor-icon-theme
     librsvg              # required for loading svg icons (udiskie uses svg icons)
     gobject-introspection
     libnotify
@@ -42,6 +43,7 @@ python3Packages.buildPythonApplication rec {
   postInstall = ''
     mkdir -p $out/share/man/man8
     cp -v doc/udiskie.8 $out/share/man/man8/
+    wrapQtApp $out/bin/udiskie
   '';
 
   checkInputs = with python3Packages; [
@@ -53,7 +55,7 @@ python3Packages.buildPythonApplication rec {
     nosetests
   '';
 
-  meta = with lib; {
+  meta = with stdenv.lib; {
     description = "Removable disk automounter for udisks";
     license = licenses.mit;
     homepage = "https://github.com/coldfix/udiskie";
