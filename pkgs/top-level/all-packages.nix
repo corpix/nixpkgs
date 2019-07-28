@@ -157,6 +157,10 @@ in
 
   corgi = callPackage ../development/tools/corgi { };
 
+  inherit (callPackage ../development/tools/continuous-integration/concourse { }) concourse fly;
+
+  garden-runc = callPackage ../development/tools/continuous-integration/concourse/garden-runc { };
+
   dhallToNix = callPackage ../build-support/dhall-to-nix.nix {
     inherit dhall-nix;
   };
@@ -9271,8 +9275,6 @@ in
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
-  fly = callPackage ../development/tools/continuous-integration/fly { };
-
   foreman = callPackage ../tools/system/foreman { };
   goreman = callPackage ../tools/system/goreman { };
 
@@ -15833,6 +15835,8 @@ in
   go-bindata = callPackage ../development/tools/go-bindata { };
 
   go-bindata-assetfs = callPackage ../development/tools/go-bindata-assetfs { };
+
+  go-packr = callPackage ../development/tools/go-packr { };
 
   go-protobuf = callPackage ../development/tools/go-protobuf { };
 
