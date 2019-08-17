@@ -100,6 +100,8 @@ let
       sha256 = "03j3jl9jzlnhq4p86zj8wqsh5sx45j1d1fvfa80ks1cfdg68qwhl";
     };
 
+    patches = [ ./systemd-completion.patch ];
+
     nativeBuildInputs = [ cmake ];
     buildInputs = [ ncurses libiconv pcre2 ];
 
