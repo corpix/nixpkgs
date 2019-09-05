@@ -56,7 +56,7 @@ with lib;
     };
     users.groups.systemd-timesync.gid = config.ids.gids.systemd-timesync;
 
-    system.activationScripts.systemd-timesyncd-migration = mkIf (versionOlder config.system.stateVersion "19.09") ''
+    system.activationScripts.systemd-timesyncd-migration = ''
       # workaround an issue of systemd-timesyncd not starting due to upstream systemd reverting their dynamic users changes
       #  - https://github.com/NixOS/nixpkgs/pull/61321#issuecomment-492423742
       #  - https://github.com/systemd/systemd/issues/12131
