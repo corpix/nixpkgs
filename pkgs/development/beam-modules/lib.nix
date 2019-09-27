@@ -55,7 +55,7 @@ rec {
         mkDerivation = pkgs.makeOverridable builder;
       };
 
-  /* Uses generic-builder to evaluate provided drv containing Elixir version
+  /* Uses generic-builder to evaluate provided drv containing LFE version
   specific data.
 
   drv: package containing version-specific args;
