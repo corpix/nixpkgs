@@ -21075,7 +21075,6 @@ in
   remotebox = callPackage ../applications/virtualization/remotebox { };
 
   retroshare = libsForQt5.callPackage ../applications/networking/p2p/retroshare { };
-  retroshare06 = retroshare;
 
   ricochet = libsForQt5.callPackage ../applications/networking/instant-messengers/ricochet { };
 
