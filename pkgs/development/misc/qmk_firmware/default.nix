@@ -3,16 +3,16 @@
 , gcc-arm-embedded, gcc-armhf-embedded
 , teensy-loader-cli, dfu-programmer, dfu-util }:
 
-let version = "0.6.144";
-
+let version = "0.7.105"; 
 in stdenv.mkDerivation {
   pname = "qmk_firmware";
   inherit version;
+
   src = fetchFromGitHub {
     owner = "qmk";
     repo = "qmk_firmware";
     rev = version;
-    sha256 = "0m71f9w32ksqjkrwhqwhr74q5v3pr38bihjyb9ks0k5id0inhrjn";
+    sha256 = "19jaqr8fp7mrhbnq76zy3aiwj8myz2jcknr4r7ycq541aha7hsjs";
     fetchSubmodules = true;
   };
   postPatch = ''
@@ -26,7 +26,9 @@ in stdenv.mkDerivation {
   installPhase = ''
     mkdir $out
   '';
+
   NIX_CFLAGS_COMPILE = "-Wno-error";
+
   nativeBuildInputs = [
     avrgcc
     avrbinutils
