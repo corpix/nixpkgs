@@ -1,26 +1,21 @@
 { config, lib, pkgs, ... }:
-with lib;
+with builtins; with lib;
 let
   cfg = config.services.yggdrasil;
   configProvided = (cfg.config != {});
-  configAsFile = (if configProvided then
-                   toString (pkgs.writeTextFile {
-                     name = "yggdrasil-conf";
-                     text = builtins.toJSON cfg.config;
-                   })
-                   else null);
   configFileProvided = (cfg.configFile != null);
-  generateConfig = (
-    if configProvided && configFileProvided then
-      "${pkgs.jq}/bin/jq -s add ${configAsFile} ${cfg.configFile}"
-    else if configProvided then
-      "cat ${configAsFile}"
-    else if configFileProvided then
-      "cat ${cfg.configFile}"
-    else
-      "${cfg.package}/bin/yggdrasil -genconf"
-  );
-
+  configFiles =
+    filter (v: v != null)
+      [
+        cfg.configFile
+        (if configProvided
+         then (toString (pkgs.writeTextFile {
+           name = "yggdrasil-conf";
+           text = builtins.toJSON cfg.config;
+         }))
+         else null)
+      ];
+  generateConfig = "${pkgs.jq}/bin/jq -s add ${concatStringsSep " " configFiles}";
 in {
   options = with types; {
     services.yggdrasil = {
