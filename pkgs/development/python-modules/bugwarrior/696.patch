@@ -1,0 +1,24 @@
+From 2d543e58c76701a9a3fbff2be125e1d6f6ce9e86 Mon Sep 17 00:00:00 2001
+From: Christian Kohlstedde <christian@kohlsted.de>
+Date: Tue, 5 Nov 2019 10:53:25 +0100
+Subject: [PATCH] JIRA: Quote username to allow the @ sign
+
+---
+ bugwarrior/services/jira.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/bugwarrior/services/jira.py b/bugwarrior/services/jira.py
+index df29978c..8e5e32f1 100644
+--- a/bugwarrior/services/jira.py
++++ b/bugwarrior/services/jira.py
+@@ -266,8 +266,8 @@ def __init__(self, *args, **kw):
+         self.url = self.config.get('base_uri')
+         password = self.get_password('password', self.username)
+ 
+-        default_query = 'assignee=' + self.username + \
+-            ' AND resolution is null'
++        default_query = 'assignee="' + self.username + \
++            '" AND resolution is null'
+         self.query = self.config.get('query', default_query)
+         if password == '@kerberos':
+             auth = dict(kerberos=True)
