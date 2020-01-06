@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   pname = "gegl";
   version = "0.4.22";
 
-  outputs = [ "out" "dev" "devdoc" ];
+  outputs = [ "out" "dev" ];
   outputBin = "dev";
 
   src = fetchurl {
