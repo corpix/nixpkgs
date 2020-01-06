@@ -2,21 +2,20 @@
 
 buildGoModule rec {
   pname = "minio";
-  version = "2019-10-12T01-39-57Z";
+  version = "2019-12-30T05-45-39Z";
 
   src = fetchFromGitHub {
     owner = "minio";
     repo = "minio";
     rev = "RELEASE.${version}";
-    sha256 = "14rqwdhk2awdpcavkaqndf85c6aww5saarbfa2skc9z76ccq6114";
+    sha256 = "0awd5qxh9wx5f281mf5rppzk6dw87xp5j6z120bcvr26kkkqv1az";
   };
 
-  modSha256 = "1cnccmmqb63l78rnjwh9bivyfr79ixjg106fbgcrn3pwghfag7ma";
-
+  modSha256 = "1a8lhhx82fik4pgr6xr4n8fwx3zhahj9ily3kd4bprb67myr4fm2";
   subPackages = [ "." ];
 
   buildFlagsArray = [''-ldflags=
-    -X github.com/minio/minio/cmd.Version=${version}
+    -X github.com/minio/minio/cmd.ReleaseTag=${version}
   ''];
 
   meta = with stdenv.lib; {
