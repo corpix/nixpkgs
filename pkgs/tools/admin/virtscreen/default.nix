@@ -1,6 +1,11 @@
-{ stdenv, fetchFromGitHub, python3Packages, x11vnc, xrandr, libGL }:
-
-python3Packages.buildPythonApplication rec {
+{ stdenv, lib, fetchFromGitHub, python3Packages, x11vnc, xrandr, libGL, qt5, makeWrapper, wrapQtAppsHook }:
+let
+  qmlPath = qmlLib: "${qmlLib}/${qt5.qtbase.qtQmlPrefix}";
+#  qmlImportPath = lib.concatMapStringsSep ":" qmlPath [
+#    qt5.full
+#    qt5.qtquickcontrols2
+#  ];
+in python3Packages.buildPythonApplication rec {
   pname = "virtscreen";
   version = "0.3.1";
 
@@ -16,17 +21,24 @@ python3Packages.buildPythonApplication rec {
     sha256 = "005qach6phz8w17k8kqmyd647c6jkfybczybxq0yxi5ik0s91a08";
   };
 
+  nativeBuildInputs = [ makeWrapper wrapQtAppsHook ];
+
   propagatedBuildInputs = with python3Packages; [
     netifaces
     pyqt5
+    qt5.full qt5.qtquickcontrols2
     quamash
     x11vnc
     xrandr
   ];
 
-  postPatch = let
-    ext = stdenv.hostPlatform.extensions.sharedLibrary; in ''
-    substituteInPlace virtscreen/__main__.py \
+  postInstall = ''
+    #wrapProgram $out/bin/virtscreen --set QML2_IMPORT_PATH "''${qmlImportPath}"
+    wrapQtApp $out/bin/virtscreen
+  '';
+
+  postPatch = let ext = stdenv.hostPlatform.extensions.sharedLibrary; in ''
+    substituteInPlace virtscreen/__main__.py        \
       --replace "'GL'" "'${libGL}/lib/libGL${ext}'" \
   '';
 
