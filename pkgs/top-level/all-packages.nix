@@ -22384,7 +22384,7 @@ in
 
   virtinst = callPackage ../applications/virtualization/virtinst {};
 
-  virtscreen = callPackage ../tools/admin/virtscreen {};
+  virtscreen = libsForQt5.callPackage ../tools/admin/virtscreen {};
 
   virtualbox = libsForQt5.callPackage ../applications/virtualization/virtualbox {
     stdenv = stdenv_32bit;
