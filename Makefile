@@ -49,9 +49,10 @@ endef
 .PHONY: update
 update:
 	git fetch origin
-	git push corpix refs/remotes/corpix/master:refs/heads/$(version)
+	git checkout -b $(version)
+	git checkout -
 	git rebase "$(shell make get-latest-commit)"
-	git push corpix +corpix:master
+	git push corpix $(version) +corpix:master
 
 .PHONY: get-latest-commit
 .ONESHELL:
