@@ -173,27 +173,6 @@ in rec {
       # Generate the HTML manual.
       dst=$out/share/doc/nixos
       mkdir -p $dst
-      xsltproc \
-        ${manualXsltprocOptions} \
-        --stringparam target.database.document "${olinkDB}/olinkdb.xml" \
-        --stringparam id.warnings "1" \
-        --nonet --output $dst/ \
-        ${docbook_xsl_ns}/xml/xsl/docbook/xhtml/chunktoc.xsl \
-        ${manual-combined}/manual-combined.xml \
-        |& tee xsltproc.out
-      grep "^ID recommended on" xsltproc.out &>/dev/null && echo "error: some IDs are missing" && false
-      rm xsltproc.out
-
-      mkdir -p $dst/images/callouts
-      cp ${docbook_xsl_ns}/xml/xsl/docbook/images/callouts/*.svg $dst/images/callouts/
-
-      cp ${../../../doc/style.css} $dst/style.css
-      cp ${../../../doc/overrides.css} $dst/overrides.css
-      cp -r ${pkgs.documentation-highlighter} $dst/highlightjs
-
-      mkdir -p $out/nix-support
-      echo "nix-build out $out" >> $out/nix-support/hydra-build-products
-      echo "doc manual $dst" >> $out/nix-support/hydra-build-products
     ''; # */
 
   # Alias for backward compatibility. TODO(@oxij): remove eventually.
