@@ -142,10 +142,6 @@ let
     ] ++ (optionalEmptyList "routers" cfg.trust.routers)
       ++ (optionalNullString "family" cfg.trust.family)
       ++ [
-      (sec "websockets")
-      (boolOpt "enabled" cfg.websocket.enable)
-      (strOpt "address" cfg.websocket.address)
-      (intOpt "port" cfg.websocket.port)
       (sec "exploratory")
       (intOpt "inbound.length" cfg.exploratory.inbound.length)
       (intOpt "inbound.quantity" cfg.exploratory.inbound.quantity)
@@ -475,8 +471,6 @@ in
       };
 
       trust.hidden = mkEnableOption "Router concealment";
-
-      websocket = mkEndpointOpt "websockets" "127.0.0.1" 7666;
 
       exploratory.inbound = i2cpOpts "exploratory";
       exploratory.outbound = i2cpOpts "exploratory";
