@@ -1,0 +1,26 @@
+diff --git a/libi2pd/SSUSession.h b/libi2pd/SSUSession.h
+index 8f81838a..8562d85b 100644
+--- a/libi2pd/SSUSession.h
++++ b/libi2pd/SSUSession.h
+@@ -25,7 +25,7 @@ namespace transport
+ 		bool IsExtendedOptions () const { return flag & SSU_HEADER_EXTENDED_OPTIONS_INCLUDED; };
+ 	};
+
+-	const int SSU_CONNECT_TIMEOUT = 5; // 5 seconds
++	const int SSU_CONNECT_TIMEOUT = 7; // 7 seconds
+ 	const int SSU_TERMINATION_TIMEOUT = 330; // 5.5 minutes
+ 	const int SSU_CLOCK_SKEW = 60; // in seconds
+ 	const size_t SSU_MAX_I2NP_MESSAGE_SIZE = 32768;
+diff --git a/libi2pd/Transports.h b/libi2pd/Transports.h
+index 117092ad..a320defa 100644
+--- a/libi2pd/Transports.h
++++ b/libi2pd/Transports.h
+@@ -66,7 +66,7 @@ namespace transport
+ 		}
+ 	};
+
+-	const size_t SESSION_CREATION_TIMEOUT = 10; // in seconds
++	const size_t SESSION_CREATION_TIMEOUT = 15; // in seconds
+ 	const int PEER_TEST_INTERVAL = 71; // in minutes
+ 	const int MAX_NUM_DELAYED_MESSAGES = 50;
+ 	class Transports
