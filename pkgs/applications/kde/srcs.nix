@@ -1443,6 +1443,13 @@
       name = "kwordquiz-20.12.2.tar.xz";
     };
   };
+  kup = {
+    version = "master";
+    src = fetchurl {
+      url = "https://invent.kde.org/kde/kup/-/archive/master/5458c4cb18665270b5c3bfab8fb7a3a9b90a486e.tar.gz";
+      sha256 = "0syzgq5gn04r7xdb8pzbi9yvrcrvw2aah23h036fh6fn3spm5pgq";
+    };
+  };
   libgravatar = {
     version = "20.12.2";
     src = fetchurl {
