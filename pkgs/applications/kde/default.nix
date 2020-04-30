@@ -97,6 +97,7 @@ let
       kcalutils = callPackage ./kcalutils.nix {};
       kcharselect = callPackage ./kcharselect.nix {};
       kcolorchooser = callPackage ./kcolorchooser.nix {};
+      kbackup = callPackage ./kbackup.nix {};
       kdav = callPackage ./kdav.nix {};
       kdebugsettings = callPackage ./kdebugsettings.nix {};
       kdegraphics-mobipocket = callPackage ./kdegraphics-mobipocket.nix {};
