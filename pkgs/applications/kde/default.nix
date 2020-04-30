@@ -152,6 +152,7 @@ let
       ktnef = callPackage ./ktnef.nix {};
       ktouch = callPackage ./ktouch.nix {};
       kwalletmanager = callPackage ./kwalletmanager.nix {};
+      kup = callPackage ./kup.nix {};
       libgravatar = callPackage ./libgravatar.nix {};
       libkcddb = callPackage ./libkcddb.nix {};
       libkdcraw = callPackage ./libkdcraw.nix {};
