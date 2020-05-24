@@ -8056,6 +8056,8 @@ in
 
   zxing = callPackage ../tools/graphics/zxing {};
 
+  zxing-cpp = callPackage ../tools/graphics/zxing-cpp {};
+
   zmap = callPackage ../tools/security/zmap { };
 
 
@@ -14667,6 +14669,8 @@ in
 
     qwt = callPackage ../development/libraries/qwt/6.nix { };
 
+    qxmpp = callPackage ../development/libraries/qxmpp { };
+
     telepathy = callPackage ../development/libraries/telepathy/qt { };
 
     vlc = callPackage ../applications/video/vlc {};
@@ -20851,6 +20855,8 @@ in
   okteta = libsForQt5.callPackage ../applications/editors/okteta { };
 
   k4dirstat = libsForQt5.callPackage ../applications/misc/k4dirstat { };
+
+  kaidan = libsForQt5.callPackage ../applications/networking/instant-messengers/kaidan { };
 
   kdeconnect = libsForQt5.callPackage ../applications/misc/kdeconnect { };
 
