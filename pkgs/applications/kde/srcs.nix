@@ -1454,8 +1454,8 @@
   kup = {
     version = "master";
     src = fetchurl {
-      url = "https://invent.kde.org/kde/kup/-/archive/master/5458c4cb18665270b5c3bfab8fb7a3a9b90a486e.tar.gz";
-      sha256 = "0syzgq5gn04r7xdb8pzbi9yvrcrvw2aah23h036fh6fn3spm5pgq";
+      url = "https://invent.kde.org/kde/kup/-/archive/master/8bb37d39c803ee870aac9da3dab4bb5b2e7772e4.tar.gz";
+      sha256 = "0i9a7i6vzk7hip1rb707898kzcz0ybjncdrdarlm95y11l8givvi";
     };
   };
   libgravatar = {
