@@ -8301,6 +8301,8 @@ in
 
   zxing = callPackage ../tools/graphics/zxing {};
 
+  zxing-cpp = callPackage ../tools/graphics/zxing-cpp {};
+
   zmap = callPackage ../tools/security/zmap { };
 
 
@@ -15114,6 +15116,8 @@ in
 
     telepathy = callPackage ../development/libraries/telepathy/qt { };
 
+    qxmpp = callPackage ../development/libraries/qxmpp { };
+
     qtwebkit-plugins = callPackage ../development/libraries/qtwebkit-plugins { };
 
   };
@@ -21524,7 +21528,15 @@ in
 
   k4dirstat = libsForQt5.callPackage ../applications/misc/k4dirstat { };
 
+<<<<<<< HEAD
   kdeconnect = libsForQt514.callPackage ../applications/misc/kdeconnect { };
+||||||| parent of 2d35ac6de67... kaidan: init
+  kdeconnect = libsForQt5.callPackage ../applications/misc/kdeconnect { };
+=======
+  kaidan = libsForQt5.callPackage ../applications/networking/instant-messengers/kaidan { };
+
+  kdeconnect = libsForQt5.callPackage ../applications/misc/kdeconnect { };
+>>>>>>> 2d35ac6de67... kaidan: init
 
   inherit (kdeFrameworks) kdesu;
 
