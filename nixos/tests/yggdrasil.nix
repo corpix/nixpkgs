@@ -118,7 +118,6 @@ in import ./make-test-python.nix ({ pkgs, ...} : {
             MulticastInterfaces = [ "eth1" ];
             LinkLocalTCPPort = 43210;
           };
-          persistentKeys = true;
         };
       };
     };
