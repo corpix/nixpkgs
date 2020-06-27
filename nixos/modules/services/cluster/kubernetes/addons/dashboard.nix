@@ -42,17 +42,17 @@ in {
     version = mkOption {
       description = "Which version of the kubernetes dashboard to deploy";
       type = types.str;
-      default = "v1.10.1";
+      default = "v2.0.1";
     };
 
     image = mkOption {
       description = "Docker image to seed for the kubernetes dashboard container.";
       type = types.attrs;
       default = {
-        imageName = "k8s.gcr.io/kubernetes-dashboard-amd64";
-        imageDigest = "sha256:0ae6b69432e78069c5ce2bcde0fe409c5c4d6f0f4d9cd50a17974fea38898747";
+        imageName = "kubernetesui/dashboard";
+        imageDigest = "sha256:a705c04e83badb4fdb2b95eb6b126f3c2759677b2f953742f3b08a1fada07d9d";
         finalImageTag = cfg.version;
-        sha256 = "01xrr4pwgr2hcjrjsi3d14ifpzdfbxzqpzxbk2fkbjb9zkv38zxy";
+        sha256 = "0rixrqnrsrwks7gnr40p5v4qvi113gcbc3kppr7159jrl21wydik";
       };
     };
   };
