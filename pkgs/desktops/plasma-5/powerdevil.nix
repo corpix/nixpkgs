@@ -18,4 +18,10 @@ mkDerivation {
   cmakeFlags = [
     "-DHAVE_DDCUTIL=On"
   ];
+  patches = [
+    # This fixes an issue where 'DDCA_Feature_List*' cannot be converted to
+    # 'DDCA_Feature_List'.
+    # This can probably be dropped on next update, maybe.
+    ./powerdevil-fix-build-with-new-ddcutil.diff
+  ];
 }
