@@ -48,11 +48,13 @@ endef
 
 .PHONY: update
 update:
-	git fetch origin
-	git checkout -b $(version)
-	git checkout -
-	git rebase "$(shell make get-latest-commit)"
-	git push corpix $(version) +corpix:master
+	bash -cxe '                                             \
+		git fetch origin                             && \
+		git checkout -b $(version)                   && \
+		git checkout -                               && \
+		git rebase "$(shell make get-latest-commit)" && \
+		git push corpix $(version) +corpix:master       \
+	'
 
 .PHONY: get-latest-commit
 .ONESHELL:
