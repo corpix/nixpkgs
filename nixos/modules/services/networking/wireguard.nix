@@ -369,9 +369,9 @@ let
         description = "WireGuard Peer - ${interfaceName} - ${peer.name}"
           + optionalString (peer.name != peer.publicKey) " (${peer.publicKey})";
         requires = [ "wireguard-${interfaceName}.service" ];
-        wants = [ "network-online.target" ];
-        after = [ "wireguard-${interfaceName}.service" "network-online.target" ];
-        wantedBy = [ "wireguard-${interfaceName}.service" ];
+        after = [ "wireguard-${interfaceName}.service" ];
+        bindsTo = [ "wireguard-${interfaceName}.service" "wireguard-${interfaceName}-routes.service" ];
+        wantedBy = [ "multi-user.target" "wireguard-${interfaceName}.service" ];
         environment.DEVICE = interfaceName;
         environment.WG_ENDPOINT_RESOLUTION_RETRIES = "infinity";
         path = with pkgs; [ iproute2 wireguard-tools ];
@@ -470,9 +470,9 @@ let
     nameValuePair "wireguard-${name}"
       {
         description = "WireGuard Tunnel - ${name}";
-        after = [ "network-pre.target" ];
-        wants = [ "network.target" ];
-        before = [ "network.target" ];
+        requires = [ "network-online.target" ];
+        after = [ "network.target" "network-online.target" ];
+        wantedBy = [ "multi-user.target" ];
         environment.DEVICE = name;
         path = with pkgs; [ kmod iproute2 wireguard-tools ];
 
