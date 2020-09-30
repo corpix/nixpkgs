@@ -48,12 +48,12 @@ endef
 
 .PHONY: update
 update:
-	bash -cxe '                                             \
-		git fetch origin                             && \
-		git checkout -b $(version)                   && \
-		git checkout -                               && \
-		git rebase "$$(make get-latest-commit)"      && \
-		git push corpix $(version) +corpix:master       \
+	bash -cxe '                                                    \
+		git fetch origin                                    && \
+		git checkout -b $(version)                          && \
+		git checkout -                                      && \
+		git rebase "$$(make get-latest-commit | grep -v :)" && \
+		git push corpix $(version) +corpix:master              \
 	'
 
 .PHONY: get-latest-commit
