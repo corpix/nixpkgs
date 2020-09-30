@@ -52,7 +52,7 @@ update:
 		git fetch origin                             && \
 		git checkout -b $(version)                   && \
 		git checkout -                               && \
-		git rebase "$(shell make get-latest-commit)" && \
+		git rebase "$$(make get-latest-commit)"      && \
 		git push corpix $(version) +corpix:master       \
 	'
 
