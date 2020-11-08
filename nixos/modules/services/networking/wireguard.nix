@@ -327,8 +327,9 @@ let
       {
         description = "WireGuard Peer - ${interfaceName} - ${peer.publicKey}";
         requires = [ "wireguard-${interfaceName}.service" ];
+        wants = [ "wireguard-${interfaceName}-routes.service" ];
         after = [ "wireguard-${interfaceName}.service" ];
-        bindsTo = [ "wireguard-${interfaceName}.service" "wireguard-${interfaceName}-routes.service" ];
+        bindsTo = [ "wireguard-${interfaceName}.service" ];
         wantedBy = [ "multi-user.target" "wireguard-${interfaceName}.service" ];
         environment.DEVICE = interfaceName;
         environment.WG_ENDPOINT_RESOLUTION_RETRIES = "infinity";
