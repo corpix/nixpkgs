@@ -1,3 +1,5 @@
+rev ?=
+
 version := $(shell date +"%Y-%m-%d").$(shell git rev-list --count HEAD)
 
 ## macro
@@ -29,19 +31,24 @@ then
   set -x
 fi
 
-for short_commit in $$(get_hydra_builds)
-do
-  commit=$$(resolve_commit "$$short_commit" || true)
-  if [ -z "$$commit" ]
-  then
-    log "commit $$short_commit was not resolved, skipping towards next"
-  else
-    log "commit $$short_commit was resolved into $$commit"
-    break
-  fi
-done
-
-echo "$$commit"
+if [ -z "$$rev" ]
+then
+  for short_commit in $$(get_hydra_builds)
+  do
+    commit=$$(resolve_commit "$$short_commit" || true)
+    if [ -z "$$commit" ]
+    then
+      log "commit $$short_commit was not resolved, skipping towards next"
+    else
+      log "commit $$short_commit was resolved into $$commit"
+      break
+    fi
+  done
+  
+  echo "$$commit"
+else
+  resolve_commit "$$rev"
+fi
 endef
 
 ## targets
