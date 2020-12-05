@@ -24,6 +24,11 @@ buildGoModule rec {
     cp mpd-mpris.service $out/lib/systemd/user
   '';
 
+  patchFlags = [ "-p0" ];
+  patches = [
+    ./stop-flooding.patch
+  ];
+
   meta = with stdenv.lib; {
     description = "An implementation of the MPRIS protocol for MPD";
     homepage = "https://github.com/natsukagami/mpd-mpris";
