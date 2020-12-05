@@ -1,0 +1,49 @@
+diff --git player.go player.go
+index 41dd41b..6b1771f 100644
+--- player.go
++++ player.go
+@@ -5,10 +5,13 @@ import (
+ 	"log"
+ 	"math"
+ 	"time"
++	"reflect"
+ 
+ 	"github.com/godbus/dbus/v5"
+ 	"github.com/godbus/dbus/v5/prop"
+ 	"github.com/pkg/errors"
++
++	"github.com/natsukagami/mpd-mpris/mpd"
+ )
+ 
+ // This file implements a struct that satisfies the `org.mpris.MediaPlayer2.Player` interface.
+@@ -17,6 +20,8 @@ import (
+ // https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html
+ type Player struct {
+ 	*Instance
++
++	lastStatus mpd.Status
+ }
+ 
+ // TrackID is the Unique track identifier.
+@@ -68,6 +73,12 @@ func (p *Player) updateStatus() *dbus.Error {
+ 	if err != nil {
+ 		return p.transformErr(err)
+ 	}
++
++	if reflect.DeepEqual(status, p.lastStatus) {
++		return nil
++	}
++	p.lastStatus = status
++
+ 	var playStatus PlaybackStatus
+ 	switch status.State {
+ 	case "play":
+@@ -210,7 +221,7 @@ func (p *Player) properties() map[string]*prop.Prop {
+ 
+ 	// Set up a position updater
+ 	go func() {
+-		tick := time.NewTicker(time.Second / 10)
++		tick := time.NewTicker(1 * time.Second)
+ 		defer tick.Stop()
+ 		for range tick.C {
+ 			if err := p.updateStatus(); err != nil {
