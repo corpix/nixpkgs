@@ -106,6 +106,7 @@ in stdenv.mkDerivation {
     # NOTE: the patch for linux 5.11 can be removed when the next version of VirtualBox is released
     ./linux-5-11.patch
     ./qtx11extras.patch
+    ./linux-5.10-r0drv-memobj-fix-r0.patch
   ];
 
   postPatch = ''
