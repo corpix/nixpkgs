@@ -104,6 +104,7 @@ in stdenv.mkDerivation {
     })
   ++ [
     ./qtx11extras.patch
+    ./linux-5.10-r0drv-memobj-fix-r0.patch
   ];
 
   postPatch = ''
