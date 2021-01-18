@@ -1,4 +1,5 @@
 rev ?=
+export rev
 
 version := $(shell date +"%Y-%m-%d").$(shell git rev-list --count HEAD)
 
