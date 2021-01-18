@@ -6,7 +6,7 @@ version := $(shell date +"%Y-%m-%d").$(shell git rev-list --count HEAD)
 
 define get-latest-commit
 #! /usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 DEBUG="$${DEBUG:-}"
 
