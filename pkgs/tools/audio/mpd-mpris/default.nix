@@ -29,7 +29,7 @@ buildGoModule rec {
     ./stop-flooding.patch
   ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "An implementation of the MPRIS protocol for MPD";
     homepage = "https://github.com/natsukagami/mpd-mpris";
     license = licenses.mit;
