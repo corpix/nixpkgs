@@ -71,6 +71,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ fontconfig libffi libtool sqlite gsettings-desktop-schemas gtk3 ]
     ++ lib.optionals stdenv.isDarwin [ libiconv CoreFoundation ncurses ];
 
+  patches = [ ./variant.patch ];
   preConfigure = ''
     unset AR
     for f in src/lt/configure src/cs/c/configure src/bc/src/string.c src/ChezScheme/workarea; do
