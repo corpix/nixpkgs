@@ -25,9 +25,9 @@ buildGoModule rec {
   '';
 
   patchFlags = [ "-p0" ];
-  patches = [
-    ./stop-flooding.patch
-  ];
+  #patches = [
+  #  ./stop-flooding.patch
+  #];
 
   meta = with lib; {
     description = "An implementation of the MPRIS protocol for MPD";
