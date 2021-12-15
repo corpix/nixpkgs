@@ -306,7 +306,7 @@ in
       };
 
       enabled = lib.mkOption {
-        readOnly = true;
+        #readOnly = true;
         type = lib.types.bool;
         default = inInitrd || inSystem;
         defaultText = lib.literalMD "`true` if ZFS filesystem support is enabled";
