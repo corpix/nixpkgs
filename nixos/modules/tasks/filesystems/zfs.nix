@@ -109,7 +109,7 @@ in
       };
 
       enabled = mkOption {
-        readOnly = true;
+        #readOnly = true;
         type = types.bool;
         default = inInitrd || inSystem;
         description = "True if ZFS filesystem support is enabled";
