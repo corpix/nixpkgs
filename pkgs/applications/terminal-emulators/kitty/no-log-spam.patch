@@ -1,0 +1,13 @@
+diff --git kitty/screen.c kitty/screen.c
+index 442ad79d..e3b81135 100644
+--- kitty/screen.c
++++ kitty/screen.c
+@@ -1052,7 +1052,7 @@ set_mode_from_const(Screen *self, unsigned int mode, bool val) {
+         default:
+             private = mode >= 1 << 5;
+             if (private) mode >>= 5;
+-            log_error("%s %s %u %s", ERROR_PREFIX, "Unsupported screen mode: ", mode, private ? "(private)" : "");
++            // log_error("%s %s %u %s", ERROR_PREFIX, "Unsupported screen mode: ", mode, private ? "(private)" : "");
+     }
+ #undef SIMPLE_MODE
+ #undef MOUSE_MODE
