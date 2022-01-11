@@ -69,6 +69,9 @@ buildPythonApplication rec {
 
   outputs = [ "out" "terminfo" ];
 
+  patchFlags = ["-p0"];
+  patches = [ ./no-log-spam.patch ];
+
   # Causes build failure due to warning
   hardeningDisable = lib.optional stdenv.cc.isClang "strictoverflow";
 
