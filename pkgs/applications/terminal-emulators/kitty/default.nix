@@ -95,6 +95,7 @@ buildPythonApplication rec {
       url = "https://github.com/kovidgoyal/kitty/commit/57cffc71b78244e6a9d49f4c9af24d1a88dbf537.patch";
       sha256 = "sha256-1IGONSVCVo5SmLKw90eqxaI5Mwc764O1ur+aMsc7h94=";
     })
+    ./no-log-spam.patch
   ];
 
   # Causes build failure due to warning
