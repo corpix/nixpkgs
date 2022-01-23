@@ -60,8 +60,7 @@ update:
 		git fetch origin                                    && \
 		git checkout -b $(version)                          && \
 		git checkout -                                      && \
-		git rebase "$$(make get-latest-commit | grep -v :)" && \
-		git push corpix $(version) +corpix:master              \
+		git rebase "origin/master"                             \
 	'
 
 .PHONY: get-latest-commit
