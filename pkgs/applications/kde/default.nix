@@ -113,7 +113,6 @@ let
       kcalutils = callPackage ./kcalutils.nix {};
       kcharselect = callPackage ./kcharselect.nix {};
       kcolorchooser = callPackage ./kcolorchooser.nix {};
-      kbackup = callPackage ./kbackup.nix {};
       kdebugsettings = callPackage ./kdebugsettings.nix {};
       kdeconnect-kde = callPackage ./kdeconnect-kde.nix {};
       kdegraphics-mobipocket = callPackage ./kdegraphics-mobipocket.nix {};
@@ -191,7 +190,6 @@ let
       kturtle = callPackage ./kturtle.nix {};
       kwalletmanager = callPackage ./kwalletmanager.nix {};
       kwave = callPackage ./kwave.nix {};
-      kup = callPackage ./kup.nix {};
       libgravatar = callPackage ./libgravatar.nix {};
       libkcddb = callPackage ./libkcddb.nix {};
       libkdcraw = callPackage ./libkdcraw.nix {};
