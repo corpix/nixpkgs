@@ -147,6 +147,13 @@ let
 
     options = {
 
+      name = mkOption {
+        example = "john";
+        type = with types; nullOr str;
+        default = null;
+        description = "Peer name";
+      };
+
       publicKey = mkOption {
         example = "xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=";
         type = types.str;
