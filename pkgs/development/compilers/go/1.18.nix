@@ -182,6 +182,7 @@ stdenv.mkDerivation rec {
     ./skip-nohup-tests.patch
     ./skip-cgo-tests-1.15.patch
     ./go_no_vendor_checks-1.16.patch
+    ./go-1.18-assertions.patch
   ];
 
   postPatch = ''
