@@ -1,16 +1,21 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  keysPath = "/var/lib/yggdrasil/keys.json";
-
   cfg = config.services.yggdrasil;
   configProvided = cfg.config != { };
   configFileProvided = cfg.configFile != null;
 
+  keysPath = "${cfg.dataDir}/keys.json";
 in {
   options = with types; {
     services.yggdrasil = {
       enable = mkEnableOption "the yggdrasil system service";
+
+      dataDir = mkOption {
+        description = "Yggdrasil data directory";
+        type = path;
+        default = "/var/lib/yggdrasil";
+      };
 
       config = mkOption {
         type = attrs;
@@ -106,7 +111,7 @@ in {
       persistentKeys = mkEnableOption ''
         If enabled then keys will be generated once and Yggdrasil
         will retain the same IPv6 address when the service is
-        restarted. Keys are stored at ${keysPath}.
+        restarted.
       '';
 
     };
@@ -127,6 +132,7 @@ in {
           | ${pkgs.jq}/bin/jq \
               'to_entries|map(select(.key|endswith("Key")))|from_entries' \
           > ${keysPath}
+        chown -R yggdrasil ${builtins.dirOf keysPath}
       fi
     '';
 
@@ -137,16 +143,16 @@ in {
       wantedBy = [ "multi-user.target" ];
 
       preStart =
-        (if configProvided || configFileProvided || cfg.persistentKeys then
-          "echo "
-
-          + (lib.optionalString configProvided
-            "'${builtins.toJSON cfg.config}'")
-          + (lib.optionalString configFileProvided "$(cat ${cfg.configFile})")
-          + (lib.optionalString cfg.persistentKeys "$(cat ${keysPath})")
-          + " | ${pkgs.jq}/bin/jq -s add | ${binYggdrasil} -normaliseconf -useconf"
-        else
-          "${binYggdrasil} -genconf") + " > /run/yggdrasil/yggdrasil.conf";
+        (if configProvided || configFileProvided || cfg.persistentKeys
+         then concatStringsSep "\n" [
+           "set -o pipefail"
+           "{"
+           "echo ${optionalString configProvided "'${builtins.toJSON cfg.config}'"}"
+           (optionalString configFileProvided "cat ${cfg.configFile}")
+           (optionalString cfg.persistentKeys "cat ${keysPath}")
+           "} | ${pkgs.jq}/bin/jq -s add | ${binYggdrasil} -normaliseconf -useconf"
+         ]
+         else "${binYggdrasil} -genconf") + " > /run/yggdrasil/yggdrasil.conf";
 
       serviceConfig = {
         ExecStart =
@@ -154,11 +160,11 @@ in {
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         Restart = "always";
 
-        DynamicUser = true;
+        User = "yggdrasil";
         StateDirectory = "yggdrasil";
         RuntimeDirectory = "yggdrasil";
         RuntimeDirectoryMode = "0750";
-        BindReadOnlyPaths = lib.optional configFileProvided cfg.configFile
+        ReadOnlyPaths = lib.optional configFileProvided cfg.configFile
           ++ lib.optional cfg.persistentKeys keysPath;
         ReadWritePaths = "/run/yggdrasil";
 
@@ -177,6 +183,15 @@ in {
       } // (if (cfg.group != null) then {
         Group = cfg.group;
       } else {});
+    };
+
+    users.groups.yggdrasil = {};
+    users.users.yggdrasil = {
+      description = "Yggdrasil daemon user";
+      home = cfg.dataDir;
+      createHome = true;
+      isSystemUser = true;
+      group = "yggdrasil";
     };
 
     networking.dhcpcd.denyInterfaces = cfg.denyDhcpcdInterfaces;
