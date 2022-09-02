@@ -46,6 +46,7 @@ stdenv.mkDerivation {
   patches = [
     # provide distutils alternative for python 3.12
     ./distutils.patch
+    ./disable-implied-port.patch
   ];
 
   # https://github.com/arvidn/libtorrent/issues/6865
