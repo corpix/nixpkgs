@@ -1,0 +1,21 @@
+diff --git src/torrent.cpp src/torrent.cpp
+index d52643d04..5f463f42d 100644
+--- src/torrent.cpp
++++ src/torrent.cpp
+@@ -2748,15 +2748,10 @@ bool is_downloading_state(int const st)
+ 		{
+ 			flags |= dht::announce::ssl_torrent;
+ 		}
+-		else if (settings().get_bool(settings_pack::enable_incoming_utp))
+-		{
+-			flags |= dht::announce::implied_port;
+-		}
+-
+ 		std::weak_ptr<torrent> self(shared_from_this());
+ 		m_torrent_file->info_hashes().for_each([&](sha1_hash const& ih, protocol_version v)
+ 		{
+-			m_ses.dht()->announce(ih, 0, flags
++			m_ses.dht()->announce(ih, m_ses.listen_port(), flags
+ 				, std::bind(&torrent::on_dht_announce_response_disp, self, v, _1));
+ 		});
+ 	}
