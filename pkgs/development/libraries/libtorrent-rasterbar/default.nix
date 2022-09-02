@@ -53,6 +53,9 @@ in stdenv.mkDerivation {
     "-Dpython-bindings=on"
   ];
 
+  patches = [./disable-implied-port.patch];
+  patchFlags = ["-p0"];
+
   meta = with lib; {
     homepage = "https://libtorrent.org/";
     description = "A C++ BitTorrent implementation focusing on efficiency and scalability";
