@@ -48,6 +48,9 @@ in stdenv.mkDerivation {
     "-Dpython-bindings=on"
   ];
 
+  patches = [./disable-implied-port.patch];
+  patchFlags = ["-p0"];
+
   meta = with lib; {
     broken = stdenv.isDarwin;
     homepage = "https://libtorrent.org/";
