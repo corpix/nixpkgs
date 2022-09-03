@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation rec {
   pname = "tinc";
-  version = "1.1pre18";
+  version = "1.1pre16";
 
   src = fetchgit {
     rev = "release-${version}";
     url = "git://tinc-vpn.org/tinc";
-    sha256 = "0a7d1xg34p54sv66lckn8rz2bpg7bl01najm2rxiwbsm956y7afm";
+    sha256 = "sha256-rAhhalJ3Kn9+5u0SxDpeC7cFfU/EvD911gg/1Weoug0=";
   };
 
   outputs = [ "out" "man" "info" ];
