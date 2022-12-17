@@ -11,7 +11,7 @@ let
       ${cfg.configText}
     ''
     else
-    pkgs.writeText "lighttpd.conf" ''
+    pkgs.writeText "cntlm.conf" ''
       # Cntlm Authentication Proxy Configuration
       Username ${cfg.username}
       Domain ${cfg.domain}
