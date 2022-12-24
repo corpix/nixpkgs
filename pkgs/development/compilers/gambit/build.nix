@@ -1,5 +1,5 @@
 { gccStdenv, lib, git, openssl, autoconf, pkgs, makeStaticLibraries, gcc, coreutils, gnused, gnugrep,
-  src, version, git-version,
+  src, version,
   gambit-support, optimizationSetting ? "-O1", gambit-params ? pkgs.gambit-support.stable-params }:
 
 # Note that according to a benchmark run by Marc Feeley on May 2018,
@@ -22,8 +22,7 @@
 gccStdenv.mkDerivation rec {
 
   pname = "gambit";
-  inherit src version git-version;
-  bootstrap = gambit-support.gambit-bootstrap;
+  inherit src version;
 
   nativeBuildInputs = [ git autoconf ];
   # TODO: if/when we can get all the library packages we depend on to have static versions,
@@ -62,6 +61,8 @@ gccStdenv.mkDerivation rec {
     # due not enable poll on darwin due to https://github.com/gambit/gambit/issues/498
     lib.optional (!gccStdenv.isDarwin) "--enable-poll";
 
+  patches = [ ./stamp.patch ];
+
   configurePhase = ''
     export CC=${gccStdenv.cc}/bin/${gccStdenv.cc.targetPrefix}gcc \
            CXX=${gccStdenv.cc}/bin/${gccStdenv.cc.targetPrefix}g++ \
@@ -71,32 +72,30 @@ gccStdenv.mkDerivation rec {
            XMKMF=${coreutils}/bin/false
     unset CFLAGS LDFLAGS LIBS CPPFLAGS CXXFLAGS
 
-    ${gambit-params.fix-stamp git-version}
-
-    ./configure --prefix=$out/gambit ${builtins.concatStringsSep " " configureFlags}
-
-    # OS-specific paths are hardcoded in ./configure
-    substituteInPlace config.status \
+    substituteInPlace ./configure \
+      --replace "$(grep '^PACKAGE_VERSION=.*$' configure)" 'PACKAGE_VERSION="v${version}"' \
+      --replace "$(grep '^PACKAGE_STRING=.*$' configure)" 'PACKAGE_STRING="Gambit v${version}"' \
       --replace "/usr/local/opt/openssl@1.1" "${lib.getLib openssl}" \
       --replace "/usr/local/opt/openssl" "${lib.getLib openssl}"
 
+    ./configure --prefix=$out/gambit ${builtins.concatStringsSep " " configureFlags}
     ./config.status
+
+    {
+      echo '#ifndef ___STAMP_VERSION'
+      echo '#define ___STAMP_VERSION "v${version}"'
+      echo '#endif'
+      echo '#ifndef ___STAMP_YMD'
+      echo '#define ___STAMP_YMD 19700101'
+      echo '#endif'
+      echo '#ifndef ___STAMP_HMS'
+      echo '#define ___STAMP_HMS 000001'
+      echo '#endif'
+    } > ./include/stamp.h
   '';
 
   buildPhase = ''
-    # Make bootstrap compiler, from release bootstrap
-    mkdir -p boot
-    cp -rp ${bootstrap}/gambit/. boot/.
-    chmod -R u+w boot
-    cd boot
-    cp ../gsc/makefile.in ../gsc/*.scm gsc/
-    ./configure
-    for i in lib gsi gsc ; do (cd $i ; make -j$NIX_BUILD_CORES) ; done
-    cd ..
-    cp boot/gsc/gsc gsc-boot
-
-    # Now use the bootstrap compiler to build the real thing!
-    make -j$NIX_BUILD_CORES from-scratch
+    make -j$NIX_BUILD_CORES bootstrap core
     ${lib.optionalString gambit-params.modules "make -j$NIX_BUILD_CORES modules"}
   '';
 
