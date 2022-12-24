@@ -1,0 +1,41 @@
+diff --git a/include/makefile.in b/include/makefile.in
+index aeaa4c37..dab2757c 100644
+--- a/include/makefile.in
++++ b/include/makefile.in
+@@ -299,35 +299,7 @@ dist-devel-post: dist-devel-recursive
+ dist-devel-recursive: dist-devel-pre
+ 
+ stamp:
+-	@if [ -e "$(rootfromhere)/.git" ]; then \
+-	    version="$$($(GIT) describe --tag --always | sed 's/-bootstrap$$//')" && \
+-	    if grep -F "#define ___STAMP_VERSION \"$$version\"" < stamp.h 2> /dev/null; then \
+-	        echo "___STAMP_VERSION unchanged from previous build"; \
+-	    else \
+-	        echo "___STAMP_VERSION changed to $$version"; \
+-	        ymd="$$(expr 0 + "$$(TZ=UTC git show --quiet --date='format-local:%Y%m%d' --format=%cd)")" && \
+-	        hms="$$(expr 0 + "$$(TZ=UTC git show --quiet --date='format-local:%H%M%S' --format=%cd)")" && \
+-	        { \
+-	            echo "/* Automatically generated */" && \
+-	            echo "" && \
+-	            echo "#ifndef ___STAMP_VERSION" && \
+-	            echo "#define ___STAMP_VERSION \"$$version\"" && \
+-	            echo "#endif" && \
+-	            echo "" && \
+-	            echo "#ifndef ___STAMP_YMD" && \
+-	            echo "#define ___STAMP_YMD $$ymd" && \
+-	            echo "#endif" && \
+-	            echo "" && \
+-	            echo "#ifndef ___STAMP_HMS" && \
+-	            echo "#define ___STAMP_HMS $$hms" && \
+-	            echo "#endif"; \
+-	        } > stamp.h.new && \
+-	        mv -f stamp.h.new stamp.h; \
+-	    fi; \
+-	else \
+-	    echo "Gambit is not being built from a Git clone. Creating empty stamp.h." && \
+-	    echo > stamp.h; \
+-	fi
++	echo Stamp is handled by Nix derivation
+ 
+ makefile: makefile.in $(rootfromhere)/config.status
+ 	cd $(rootfromhere) && CONFIG_FILES=$(herefromroot)/$@ CONFIG_HEADERS= ./config.status
