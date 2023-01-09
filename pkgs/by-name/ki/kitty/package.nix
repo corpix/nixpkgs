@@ -145,6 +145,8 @@ buildPythonApplication rec {
     # OSError: master_fd is in error condition
     ./disable-test_ssh_bootstrap_with_different_launchers.patch
 
+    # silence "Unsupported screen mode" flood
+    ./silence.patch
   ];
 
   hardeningDisable = [
