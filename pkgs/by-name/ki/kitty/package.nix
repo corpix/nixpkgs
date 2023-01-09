@@ -160,6 +160,9 @@ buildPythonApplication rec {
     # OSError: master_fd is in error condition
     ./disable-test_ssh_bootstrap_with_different_launchers.patch
 
+    # silence "Unsupported screen mode" flood
+    ./silence.patch
+
     # Remove after 0.40.1
     (fetchpatch {
       url = "https://github.com/kovidgoyal/kitty/commit/6171ca6.patch";
@@ -170,7 +173,6 @@ buildPythonApplication rec {
       url = "https://github.com/kovidgoyal/kitty/commit/8cbdd003e2.patch";
       hash = "sha256-pKIJIqIdPfB4kQ6FtpYDumpgjJkMxoLT8fKzfgWYJnw=";
     })
-
   ];
 
   hardeningDisable = [
