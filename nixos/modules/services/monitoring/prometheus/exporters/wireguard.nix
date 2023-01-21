@@ -21,7 +21,14 @@ in {
 
     wireguardConfig = mkOption {
       type = with types; nullOr (either path str);
-      default = null;
+      default = pkgs.writeText "wg.conf"
+        (concatMapStringsSep "\n" (peer: ''
+          [Peer]
+          # friendly_name = ${peer.name}
+          PublicKey = ${peer.publicKey}
+          AllowedIPs = ${concatStringsSep "," peer.allowedIPs}
+        '') (flatten (map (interface: interface.peers)
+          (attrValues config.networking.wireguard.interfaces))));
 
       description = ''
         Path to the Wireguard Config to
