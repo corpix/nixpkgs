@@ -8,16 +8,32 @@
 
 let
   cfg = config.services.prometheus.exporters.wireguard;
+
   inherit (lib)
     mkOption
     types
     mkRenamedOptionModule
     mkEnableOption
+    concatMapStringsSep
+    concatStringsSep
     optionalString
     escapeShellArg
+    flatten
+    attrValues
     ;
-in
-{
+
+  wireguardConfig =
+    if cfg.wireguardConfig != null
+    then cfg.wireguardConfig
+    else (pkgs.writeText "wg.conf"
+      (concatMapStringsSep "\n" (peer: ''
+        [Peer]
+        # friendly_name = ${peer.name}
+        PublicKey = ${peer.publicKey}
+        AllowedIPs = ${concatStringsSep "," peer.allowedIPs}
+      '') (flatten (map (interface: interface.peers)
+        (attrValues config.networking.wireguard.interfaces)))));
+in {
   port = 9586;
   imports = [
     (mkRenamedOptionModule [ "addr" ] [ "listenAddress" ])
@@ -31,14 +47,7 @@ in
 
     wireguardConfig = mkOption {
       type = with types; nullOr (either path str);
-      default = pkgs.writeText "wg.conf"
-        (concatMapStringsSep "\n" (peer: ''
-          [Peer]
-          # friendly_name = ${peer.name}
-          PublicKey = ${peer.publicKey}
-          AllowedIPs = ${concatStringsSep "," peer.allowedIPs}
-        '') (flatten (map (interface: interface.peers)
-          (attrValues config.networking.wireguard.interfaces))));
+      default = null;
 
       description = ''
         Path to the Wireguard Config to
@@ -80,10 +89,10 @@ in
         ${pkgs.prometheus-wireguard-exporter}/bin/prometheus_wireguard_exporter \
           -p ${toString cfg.port} \
           -l ${cfg.listenAddress} \
+          -n ${escapeShellArg wireguardConfig}"
           ${optionalString cfg.verbose "-v true"} \
           ${optionalString cfg.singleSubnetPerField "-s true"} \
-          ${optionalString cfg.withRemoteIp "-r true"} \
-          ${optionalString (cfg.wireguardConfig != null) "-n ${escapeShellArg cfg.wireguardConfig}"}
+          ${optionalString cfg.withRemoteIp "-r true"}
       '';
       RestrictAddressFamilies = [
         # Need AF_NETLINK to collect data
