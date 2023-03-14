@@ -176,9 +176,9 @@ let
 
       name = mkOption {
         example = "john";
-        type = with types; nullOr str;
+        type = types.nullOr types.str;
         default = null;
-        description = "Peer name";
+        description = lib.mdDoc "Peer name.";
       };
 
       publicKey = mkOption {

@@ -20,7 +20,7 @@ in {
 
 
       dataDir = mkOption {
-        description = "Yggdrasil data directory";
+        description = lib.mdDoc "Yggdrasil data directory";
         type = path;
         default = "/var/lib/yggdrasil";
       };
