@@ -80,7 +80,7 @@ in {
         ${pkgs.prometheus-wireguard-exporter}/bin/prometheus_wireguard_exporter \
           -p ${toString cfg.port} \
           -l ${cfg.listenAddress} \
-          -n ${escapeShellArg wireguardConfig}"
+          -n ${escapeShellArg wireguardConfig}
           ${optionalString cfg.verbose "-v true"} \
           ${optionalString cfg.singleSubnetPerField "-s true"} \
           ${optionalString cfg.withRemoteIp "-r true"}
