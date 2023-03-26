@@ -4,7 +4,7 @@ with lib;
 
 let
   cfg = config.services.prometheus.exporters.wireguard;
-  wireguardConfig = 
+  wireguardConfig =
     if cfg.wireguardConfig != null
     then cfg.wireguardConfig
     else (pkgs.writeText "wg.conf"
@@ -68,7 +68,7 @@ in {
         ${pkgs.prometheus-wireguard-exporter}/bin/prometheus_wireguard_exporter \
           -p ${toString cfg.port} \
           -l ${cfg.listenAddress} \
-          -n ${escapeShellArg wireguardConfig}"
+          -n ${escapeShellArg wireguardConfig}
           ${optionalString cfg.verbose "-v true"} \
           ${optionalString cfg.singleSubnetPerField "-s true"} \
           ${optionalString cfg.withRemoteIp "-r true"}
