@@ -27,6 +27,9 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
+  patches = [./knot-exporter-ipv6.patch];
+  patchFlags = ["-p0"];
+
   passthru.tests = { inherit (nixosTests.prometheus-exporters) knot; };
 
   meta = with lib; {
