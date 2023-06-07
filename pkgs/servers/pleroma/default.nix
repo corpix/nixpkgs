@@ -1,23 +1,24 @@
 { lib, beamPackages
 , fetchFromGitHub, fetchFromGitLab, fetchHex
 , file, cmake
-, libxcrypt-legacy
 , nixosTests, writeText
 , ...
 }:
 
 beamPackages.mixRelease rec {
   pname = "pleroma";
-  version = "2.5.1";
+  version = "43458cb7a144f984d2d745e50b8a992c7482265c";
 
   src = fetchFromGitLab {
     domain = "git.pleroma.social";
     owner = "pleroma";
     repo = "pleroma";
-    rev = "v${version}";
-    sha256 = "sha256-3iG2s7jVEnhq1kLLgtaHnFmLYBO2Xr5M5jjZfSNA9z4=";
+    rev = version;
+    sha256 = "sha256-cck1rcM238A22eFDPFoIGa7BIVHmNW7xt1q9oqlqvYk=";
   };
   stripDebug = false;
+
+  OAUTH_CONSUMER_STRATEGIES = "keycloak:ueberauth_keycloak_strategy";
 
   mixNixDeps = import ./mix.nix {
     inherit beamPackages lib;
@@ -160,13 +161,6 @@ beamPackages.mixRelease rec {
           mkdir config
           cp ${cfgFile} config/config.exs
         '';
-      };
-
-      crypt = let
-        version = prev.crypt.version;
-      in prev.crypt.override {
-        buildInputs = [ libxcrypt-legacy ];
-        postInstall = "mv $out/lib/erlang/lib/crypt-${version}/priv/{hex-source-crypt-${version},crypt}.so";
       };
     });
   };
