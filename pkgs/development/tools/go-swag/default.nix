@@ -14,6 +14,7 @@ buildGoModule rec {
   vendorHash = "sha256-yQPmiK1CQNn3sr482OEkdRLK6YP8CvPMA/nPGdVJbMc=";
 
   subPackages = [ "cmd/swag" ];
+  allowGoReference = true;
 
   meta = with lib; {
     description = "Automatically generate RESTful API documentation with Swagger 2.0 for Go";
