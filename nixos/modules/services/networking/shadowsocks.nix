@@ -128,6 +128,15 @@ in
           <https://github.com/shadowsocks/shadowsocks-libev/blob/master/src/jconf.c>
         '';
       };
+
+      extraArgs = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        example = ["-i" "eth0"];
+        description = lib.mdDoc ''
+          Additional command-line arguments for shadowsocks.
+        '';
+      };
     };
 
   };
@@ -153,11 +162,17 @@ in
       wantedBy = [ "multi-user.target" ];
       path = [ pkgs.shadowsocks-libev ] ++ optional (cfg.plugin != null) cfg.plugin ++ optional (cfg.passwordFile != null) pkgs.jq;
       serviceConfig.PrivateTmp = true;
-      script = ''
+      script = let
+        configPath =
+          if cfg.passwordFile != null
+          then "/tmp/shadowsocks.json"
+          else configFile;
+        extraArgs = concatStringsSep " " cfg.extraArgs;
+      in ''
         ${optionalString (cfg.passwordFile != null) ''
           cat ${configFile} | jq --arg password "$(cat "${cfg.passwordFile}")" '. + { password: $password }' > /tmp/shadowsocks.json
         ''}
-        exec ss-server -c ${if cfg.passwordFile != null then "/tmp/shadowsocks.json" else configFile}
+        exec ss-server -c ${configPath} ${extraArgs}
       '';
     };
   };
