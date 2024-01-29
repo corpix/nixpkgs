@@ -30,9 +30,6 @@ python3.pkgs.buildPythonApplication rec {
     "knot_exporter"
   ];
 
-  patches = [./knot-exporter-ipv6.patch];
-  patchFlags = ["-p0"];
-
   passthru.tests = { inherit (nixosTests.prometheus-exporters) knot; };
 
   meta = {
