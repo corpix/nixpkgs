@@ -167,6 +167,12 @@ in
         --replace '(lazy-seq "0.1.0")' 'lazy-seq'
     '';
   };
+  medea = old: {
+    postPatch = ''
+      substituteInPlace medea.egg \
+        --replace '(comparse "0.3.0")' 'comparse'
+    '';
+  };
 
   # platform changes
   pledge = addMetaAttrs { platforms = lib.platforms.openbsd; };
