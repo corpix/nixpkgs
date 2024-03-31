@@ -161,6 +161,12 @@ in
         --replace "-lrt" ""
     '';
   };
+  comparse = old: {
+    postPatch = ''
+      substituteInPlace comparse.egg \
+        --replace '(lazy-seq "0.1.0")' 'lazy-seq'
+    '';
+  };
 
   # platform changes
   pledge = addMetaAttrs { platforms = lib.platforms.openbsd; };
@@ -173,7 +179,6 @@ in
   begin-syntax = broken;
   canvas-draw = broken;
   chicken-doc-admin = broken;
-  comparse = broken;
   coops-utils = broken;
   crypt = broken;
   hypergiant = broken;
