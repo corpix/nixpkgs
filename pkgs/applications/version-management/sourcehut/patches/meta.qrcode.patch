@@ -1,0 +1,12 @@
+diff --git a/metasrht/qrcode.py b/metasrht/qrcode.py
+index 825df8c..4dc2ad1 100644
+--- a/metasrht/qrcode.py
++++ b/metasrht/qrcode.py
+@@ -5,6 +5,6 @@ import qrcode
+ def gen_qr(data):
+     img = qrcode.make(data, border=3, box_size=5)
+     arr = io.BytesIO()
+-    img.save(arr, format='PNG')
++    img.save(arr)
+     encoded = base64.b64encode(arr.getvalue()).decode('utf-8')
+     return 'data:image/png;base64,{}'.format(encoded)
