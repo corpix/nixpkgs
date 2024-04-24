@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , fetchFromSourcehut
 , buildGoModule
 , buildPythonPackage
@@ -17,7 +18,17 @@
 }:
 let
   version = "0.89.15";
-  gqlgen = import ./fix-gqlgen-trimpath.nix { inherit unzip; gqlgenVersion = "0.17.39"; };
+  patch-go-mod = import ./patch-go-mod.nix {
+    inherit stdenv fetchFromSourcehut unzip;
+    gqlgenVersion = "0.17.39";
+    core-go = fetchFromSourcehut {
+      owner = "~sircmpwn";
+      repo = "core-go";
+      rev = "d2ad494f2350d5b0d6baa86d5bf8718bd31d5840";
+      hash = "sha256-M0ozBjvPfP7z/APCgCB7nhK/sS98oLgv6A4F8uI6uaY=";
+    };
+    core-go-patches = [./patches/core-go.d2ad494.auditlog-ip.patch];
+  };
 
   src = fetchFromSourcehut {
     owner = "~sircmpwn";
@@ -31,14 +42,14 @@ let
     pname = "buildsrht-api";
     modRoot = "api";
     vendorHash = "sha256-dwpuB+aYqzhGSdGVq/F9FTdHWMBkGMtVuZ7I3hB3b+Q=";
-  } // gqlgen);
+  } // patch-go-mod);
 
   buildsrht-worker = buildGoModule ({
     inherit src version;
     pname = "buildsrht-worker";
     modRoot = "worker";
     vendorHash = "sha256-dwpuB+aYqzhGSdGVq/F9FTdHWMBkGMtVuZ7I3hB3b+Q=";
-  } // gqlgen);
+  } // patch-go-mod);
 in
 buildPythonPackage rec {
   inherit src version;

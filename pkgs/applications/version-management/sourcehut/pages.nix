@@ -1,10 +1,12 @@
 { lib
+, stdenv
 , fetchFromSourcehut
 , buildGoModule
 , unzip
 }:
-
-buildGoModule (rec {
+let
+  patch-go-mod = import ./patch-go-mod.nix { inherit stdenv fetchFromSourcehut unzip; gqlgenVersion = "0.17.42"; };
+in buildGoModule (rec {
   pname = "pagessrht";
   version = "0.15.7";
 
@@ -40,4 +42,4 @@ buildGoModule (rec {
   };
   # There is no ./loaders but this does not cause troubles
   # to go generate
-} // import ./fix-gqlgen-trimpath.nix { inherit unzip; gqlgenVersion = "0.17.42"; })
+} // patch-go-mod)

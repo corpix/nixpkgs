@@ -1,7 +1,28 @@
-{ unzip
+{ stdenv
+, fetchFromSourcehut
+, core-go ? fetchFromSourcehut {
+  owner = "~sircmpwn";
+  repo = "core-go";
+  rev = "3c1346e6bbc37884ca5eb390e22728e4c40e3fa5";
+  hash = "sha256-jCbPNZ+rQiLQSJF/XN5aQGn0IA2h0GXUdzg1XHUJIzE=";
+}
+, core-go-patches ? [./patches/core-go.auditlog-ip.patch]
+, unzip
 , gqlgenVersion
 }:
-{
+let
+  core-go-mod = stdenv.mkDerivation {
+    name = "core-go";
+    src = core-go;
+
+    patches = core-go-patches;
+    phases = ["unpackPhase" "patchPhase" "installPhase"];
+    installPhase = ''
+      mkdir $out
+      cp -r --reflink=auto ./* ./.* $out/
+    '';
+  };
+in {
   overrideModAttrs = (_: {
     # No need to workaround -trimpath: it's not used in goModules,
     # but do download `go generate`'s dependencies nonetheless.
@@ -18,6 +39,11 @@
   proxyVendor = true;
 
   nativeBuildInputs = [ unzip ];
+
+  postConfigure = ''
+    echo >> ../go.mod
+    echo 'replace git.sr.ht/~sircmpwn/core-go => ${core-go-mod}' >> ../go.mod
+  '';
 
   # Workaround -trimpath in the package derivation:
   # https://github.com/99designs/gqlgen/issues/1537

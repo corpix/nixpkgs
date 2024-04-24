@@ -1,9 +1,11 @@
 { lib
+, stdenv
 , fetchFromSourcehut
 , buildGoModule
 , buildPythonPackage
 , srht
 , alembic
+, aiosmtpd
 , pytest
 , factory-boy
 , python
@@ -14,7 +16,7 @@
 
 let
   version = "0.75.10";
-  gqlgen = import ./fix-gqlgen-trimpath.nix { inherit unzip; gqlgenVersion = "0.17.45"; };
+  patch-go-mod = import ./patch-go-mod.nix { inherit stdenv fetchFromSourcehut unzip; gqlgenVersion = "0.17.45"; };
 
   src = fetchFromSourcehut {
     owner = "~sircmpwn";
@@ -28,7 +30,7 @@ let
     pname = "todosrht-api";
     modRoot = "api";
     vendorHash = "sha256-fImOQLnQLHTrg5ikuYRZ+u+78exAiYA19DGQoUjQBOM=";
-  } // gqlgen);
+  } // patch-go-mod);
 in
 buildPythonPackage rec {
   inherit src version;
@@ -37,6 +39,7 @@ buildPythonPackage rec {
 
   disabled = pythonOlder "3.7";
 
+  patches = [./patches/todo.deps.patch];
   postPatch = ''
     substituteInPlace Makefile \
       --replace "all: api" ""
@@ -49,6 +52,7 @@ buildPythonPackage rec {
   propagatedBuildInputs = [
     srht
     alembic
+    aiosmtpd
   ];
 
   preBuild = ''

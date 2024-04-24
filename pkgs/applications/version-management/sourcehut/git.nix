@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , fetchFromSourcehut
 , buildGoModule
 , buildPythonPackage
@@ -14,7 +15,7 @@
 }:
 let
   version = "0.85.9";
-  gqlgen = import ./fix-gqlgen-trimpath.nix { inherit unzip; gqlgenVersion = "0.17.42"; };
+  patch-go-mod = import ./patch-go-mod.nix { inherit stdenv fetchFromSourcehut unzip; gqlgenVersion = "0.17.42"; };
 
   src = fetchFromSourcehut {
     owner = "~sircmpwn";
@@ -28,7 +29,7 @@ let
     pname = "gitsrht-api";
     modRoot = "api";
     vendorHash = "sha256-4KwnUi6ILUagMDXzuBG9CRT2N8uyjvRM74TwJqIzicc=";
-  } // gqlgen);
+  } // patch-go-mod);
 
   gitDispatch = buildGoModule ({
     inherit src version;
@@ -40,7 +41,7 @@ let
       substituteInPlace gitsrht-dispatch/main.go \
         --replace /var/log/gitsrht-dispatch /var/log/sourcehut/gitsrht-dispatch
     '';
-  } // gqlgen);
+  } // patch-go-mod);
 
   gitKeys = buildGoModule ({
     inherit src version;
@@ -52,7 +53,7 @@ let
       substituteInPlace gitsrht-keys/main.go \
         --replace /var/log/gitsrht-keys /var/log/sourcehut/gitsrht-keys
     '';
-  } // gqlgen);
+  } // patch-go-mod);
 
   gitShell = buildGoModule ({
     inherit src version;
@@ -64,7 +65,7 @@ let
       substituteInPlace gitsrht-shell/main.go \
         --replace /var/log/gitsrht-shell /var/log/sourcehut/gitsrht-shell
     '';
-  } // gqlgen);
+  } // patch-go-mod);
 
   gitUpdateHook = buildGoModule ({
     inherit src version;
@@ -76,7 +77,7 @@ let
       substituteInPlace gitsrht-update-hook/main.go \
         --replace /var/log/gitsrht-update-hook /var/log/sourcehut/gitsrht-update-hook
     '';
-  } // gqlgen);
+  } // patch-go-mod);
 in
 buildPythonPackage rec {
   inherit src version;

@@ -3,7 +3,7 @@
 let
   inherit (builtins) head tail;
   inherit (lib) generators maintainers types;
-  inherit (lib.attrsets) attrValues filterAttrs mapAttrs mapAttrsToList recursiveUpdate;
+  inherit (lib.attrsets) attrValues filterAttrs mapAttrs mapAttrsToList recursiveUpdate optionalAttrs;
   inherit (lib.lists) flatten optional optionals;
   inherit (lib.options) literalExpression mkEnableOption mkOption mkPackageOption;
   inherit (lib.strings) concatMapStringsSep concatStringsSep optionalString versionOlder;
@@ -1108,14 +1108,17 @@ in
       } ];
       port = 5010;
       webhooks = true;
-      extraTimers.hgsrht-periodic = {
-        service = baseService;
-        timerConfig.OnCalendar = ["*:0/20"];
-      };
-      extraTimers.hgsrht-clonebundles = mkIf cfg.hg.cloneBundles {
-        service = baseService;
-        timerConfig.OnCalendar = ["daily"];
-        timerConfig.AccuracySec = "1h";
+      extraTimers = {
+        hgsrht-periodic = {
+          service = baseService;
+          timerConfig.OnCalendar = ["*:0/20"];
+        };
+      } // optionalAttrs cfg.hg.cloneBundles {
+        hgsrht-clonebundles = {
+          service = baseService;
+          timerConfig.OnCalendar = ["daily"];
+          timerConfig.AccuracySec = "1h";
+        };
       };
       extraServices.hgsrht-api = {
         serviceConfig.Restart = "always";
@@ -1289,8 +1292,8 @@ in
         version = pkgs.sourcehut.${srvsrht}.version;
         stateDir = "/var/lib/sourcehut/${srvsrht}";
         iniKey = "pages.sr.ht";
-        in {
-        preStart = mkBefore ''
+      in {
+        preStart = mkForce ''
           set -x
           # Use the /run/sourcehut/${srvsrht}/config.ini
           # installed by a previous ExecStartPre= in baseService
@@ -1301,10 +1304,21 @@ in
             echo ${version} >${stateDir}/db
           fi
 
+          # Unknown migration tool is used for pages, migrations in codebase is inconsistent
+          # so we will write our own here, fuck that
+          schema_version=$(echo 'select id from schema_version;' | ${postgresql.package}/bin/psql -t '${cfg.settings.${iniKey}.connection-string}')
+          if [ -z "$schema_version" ]; then
+            schema_version=0
+          fi
+
           ${optionalString cfg.settings.${iniKey}.migrate-on-upgrade ''
-            # Just try all the migrations because they're not linked to the version
+            # We have a minimal migration engine here, in bash...
+            # because who cares to use goose or some good tool for migrations? Huh
             for sql in ${pkgs.sourcehut.pagessrht}/share/sql/migrations/*.sql; do
-              ${postgresql.package}/bin/psql '${cfg.settings.${iniKey}.connection-string}' -f "$sql" || true
+              migration_version=$(echo $(basename "$sql") | awk -F- '{print int($1)}')
+              if [ "$migration_version" -gt "$schema_version" ]; then
+                ${postgresql.package}/bin/psql '${cfg.settings.${iniKey}.connection-string}' -f "$sql"
+              fi
             done
           ''}
 
