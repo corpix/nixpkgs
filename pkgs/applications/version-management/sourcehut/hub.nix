@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , fetchFromSourcehut
+, fetchFromGitHub
 , buildGoModule
 , buildPythonPackage
 , python
@@ -14,7 +15,7 @@
 
 let
   version = "0.17.7";
-  patch-go-mod = import ./patch-go-mod.nix { inherit stdenv fetchFromSourcehut unzip; gqlgenVersion = "0.17.43"; };
+  patch-go-mod = import ./patch-go-mod.nix { inherit stdenv fetchFromSourcehut fetchFromGitHub unzip; gqlgenVersion = "0.17.43"; };
 
   src = fetchFromSourcehut {
     owner = "~sircmpwn";
