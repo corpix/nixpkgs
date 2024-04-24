@@ -945,13 +945,14 @@ in
         );
         image_dir_pre = pkgs.symlinkJoin {
           name = "buildsrht-worker-images-pre";
-          paths = image_dirs;
-            # FIXME: not working, apparently because ubuntu/latest is a broken link
-            # ++ [ "${pkgs.sourcehut.buildsrht}/lib/images" ];
+          paths = image_dirs ++ [ "${pkgs.sourcehut.buildsrht}/lib/images" ];
         };
         image_dir = pkgs.runCommand "buildsrht-worker-images" { } ''
           mkdir -p $out/images
-          cp -Lr ${image_dir_pre}/* $out/images
+          images=${image_dir_pre}/*
+          if [ ! -z "$images" ]; then
+            cp -Lr $images $out/images
+          fi
         '';
         in mkMerge [
         {

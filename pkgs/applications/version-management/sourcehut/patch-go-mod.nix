@@ -1,5 +1,6 @@
 { stdenv
 , fetchFromSourcehut
+, fetchFromGitHub
 , core-go ? fetchFromSourcehut {
   owner = "~sircmpwn";
   repo = "core-go";
@@ -22,6 +23,38 @@ let
       cp -r --reflink=auto ./* ./.* $out/
     '';
   };
+  redigo-mod = stdenv.mkDerivation {
+    name = "redigo";
+    src = fetchFromGitHub {
+      owner = "gomodule";
+      repo = "redigo";
+      rev = "v2.0.0";
+      hash = "sha256-8zrbDkA5IPHeKJogs+cBRJbAwIB2bMCdDo+sIwDS580=";
+    };
+
+    patches = [./patches/redigo.unix-socket.patch];
+    phases = ["unpackPhase" "patchPhase" "installPhase"];
+    installPhase = ''
+      mkdir $out
+      cp -r --reflink=auto ./* ./.* $out/
+    '';
+  };
+  # gocelery-mod = stdenv.mkDerivation {
+  #   name = "gocelery";
+  #   src = fetchFromGitHub {
+  #     owner = "gocelery";
+  #     repo = "gocelery";
+  #     rev = "825d89059344006c104412e628d456b3a111a6a5";
+  #     hash = "sha256-3AVHQDYEVQo+k9YE8i3Rra79Ca/kQHLGH/qi3KLYF7M=";
+  #   };
+
+  #   patches = [./patches/gocelery.deps.patch];
+  #   phases = ["unpackPhase" "patchPhase" "installPhase"];
+  #   installPhase = ''
+  #     mkdir $out
+  #     cp -r --reflink=auto ./* ./.* $out/
+  #   '';
+  # };
 in {
   overrideModAttrs = (_: {
     # No need to workaround -trimpath: it's not used in goModules,
@@ -43,6 +76,7 @@ in {
   postConfigure = ''
     echo >> ../go.mod
     echo 'replace git.sr.ht/~sircmpwn/core-go => ${core-go-mod}' >> ../go.mod
+    echo 'replace github.com/gomodule/redigo => ${redigo-mod}' >> ../go.mod
   '';
 
   # Workaround -trimpath in the package derivation:
