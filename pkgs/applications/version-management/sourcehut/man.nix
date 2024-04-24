@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , fetchFromSourcehut
 , buildGoModule
 , buildPythonPackage
@@ -13,7 +14,7 @@
 
 let
   version = "0.16.5";
-  gqlgen = import ./fix-gqlgen-trimpath.nix { inherit unzip; gqlgenVersion = "0.17.43"; };
+  patch-go-mod = import ./patch-go-mod.nix { inherit stdenv fetchFromSourcehut unzip; gqlgenVersion = "0.17.43"; };
 
   src = fetchFromSourcehut {
     owner = "~sircmpwn";
@@ -27,7 +28,7 @@ let
     pname = "mansrht-api";
     modRoot = "api";
     vendorHash = "sha256-GVN11nEJqIHh8MtKvIXe4zcUwJph9eTSkJ2R+ufD+ic=";
-  } // gqlgen);
+  } // patch-go-mod);
 in
 buildPythonPackage rec {
   inherit src version;

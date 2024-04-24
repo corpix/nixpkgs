@@ -1,0 +1,14 @@
+diff --git a/auth/middleware.go b/auth/middleware.go
+index 3ac7315..82707eb 100644
+--- a/auth/middleware.go
++++ b/auth/middleware.go
+@@ -321,9 +321,6 @@ func internalAuth(internalNet []*net.IPNet, payload []byte,
+ 		if ip == nil {
+ 			continue
+ 		}
+-		if ip.IsPrivate() {
+-			continue
+-		}
+ 		auth.IPAddress = ip.String()
+ 		break
+ 	}

@@ -326,24 +326,28 @@ in
                 let
                   version = pkgs.sourcehut.${srvsrht}.version;
                   stateDir = "/var/lib/sourcehut/${srvsrht}";
-                in
-                mkBefore ''
+                in mkBefore ''
+                  set -o pipefail
                   set -x
+
                   # Use the /run/sourcehut/${srvsrht}/config.ini
                   # installed by a previous ExecStartPre= in baseService
                   cd /run/sourcehut/${srvsrht}
 
                   if test ! -e ${stateDir}/db; then
+                    # All services has schema.sql, so will use it with psql as more robust solution than relying on alembic
+                    cat ${pkgs.sourcehut.${srvsrht}.src}/schema.sql | psql '${cfg.settings."${srv}.sr.ht".connection-string}'
                     # Setup the initial database.
                     # Note that it stamps the alembic head afterward
-                    ${cfg.python}/bin/${srvsrht}-initdb
+                    ${pkgs.sourcehut.${srvsrht}}/bin/${srvsrht}-initdb
                     echo ${version} >${stateDir}/db
                   fi
 
                   ${optionalString cfg.settings.${iniKey}.migrate-on-upgrade ''
                     if [ "$(cat ${stateDir}/db)" != "${version}" ]; then
                       # Manage schema migrations using alembic
-                      ${cfg.python}/bin/${srvsrht}-migrate -a upgrade head
+                      ${pkgs.sourcehut.coresrht}/bin/srht-migrate ${srv}.sr.ht -a upgrade head
+                      ${pkgs.sourcehut.${srvsrht}}/bin/${srvsrht}-migrate -a upgrade head
                       echo ${version} >${stateDir}/db
                     fi
                   ''}
@@ -389,7 +393,7 @@ in
               after = [ "network.target" "${srvsrht}.service" ];
               serviceConfig = {
                 Type = "oneshot";
-                ExecStart = "${cfg.python}/bin/${timerName}";
+                ExecStart = "${pkgs.sourcehut.${srvsrht}}/bin/${timerName}";
               };
             }
             (timer.service or { })
@@ -438,7 +442,7 @@ in
             wantedBy = [ "timers.target" ];
             inherit (timer) timerConfig;
           })
-        extraTimers;
+        (builtins.trace (builtins.toJSON extraTimers) extraTimers);
     }
   ]);
 }
