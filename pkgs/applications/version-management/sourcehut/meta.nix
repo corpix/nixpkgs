@@ -49,6 +49,7 @@ buildPythonPackage rec {
 
   disabled = pythonOlder "3.7";
 
+  patches = [./patches/meta.qrcode.patch];
   postPatch = ''
     substituteInPlace Makefile \
       --replace "all: api" ""
