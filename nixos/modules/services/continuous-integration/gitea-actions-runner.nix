@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  utils,
   ...
 }:
 
@@ -24,10 +23,6 @@ let
     mkIf
     nameValuePair
     types
-    ;
-
-  inherit (utils)
-    escapeSystemdPath
     ;
 
   cfg = config.services.gitea-actions-runner;
@@ -193,7 +188,7 @@ in
             wantsPodman = wantsContainerRuntime && config.virtualisation.podman.enable;
             configFile = settingsFormat.generate "config.yaml" instance.settings;
           in
-          nameValuePair "gitea-runner-${escapeSystemdPath name}" {
+          nameValuePair "gitea-runner-${name}" {
             inherit (instance) enable;
             description = "Gitea Actions Runner";
             wants = [ "network-online.target" ];
