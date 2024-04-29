@@ -185,7 +185,7 @@ in
         wantsPodman = wantsContainerRuntime && config.virtualisation.podman.enable;
         configFile = settingsFormat.generate "config.yaml" instance.settings;
       in
-        nameValuePair "gitea-runner-${escapeSystemdPath name}" {
+        nameValuePair "gitea-runner-${name}" {
           inherit (instance) enable;
           description = "Gitea Actions Runner";
           wants = [ "network-online.target" ];
