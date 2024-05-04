@@ -464,6 +464,34 @@ let
           example = [ "# both 2 local/topic/ remote/topic/" ];
         };
 
+        localPasswordFile = lib.mkOption {
+          type = uniq (nullOr path);
+          example = "/path/to/file";
+          default = null;
+          description = ''
+            Specifies the path to a file containing the
+            clear text password for the MQTT local user
+            for bridge.
+            The file contents will be securely passed to
+            mosquitto as part of configuration file
+            during runtime bypassing Nix store.
+          '';
+        };
+
+        remotePasswordFile = lib.mkOption {
+          type = uniq (nullOr path);
+          example = "/path/to/file";
+          default = null;
+          description = ''
+            Specifies the path to a file containing the
+            clear text password for the MQTT remote user
+            for bridge.
+            The file contents will be securely passed to
+            mosquitto as part of configuration file
+            during runtime bypassing Nix store.
+          '';
+        };
+
         settings = lib.mkOption {
           type = submodule {
             freeformType = attrsOf optionType;
@@ -486,14 +514,20 @@ let
       }
     ];
 
-  formatBridge =
-    name: bridge:
+  formatBridge = let
+    mergeBridgeSettings = bridge:
+      lib.optionalAttrs (bridge.localPasswordFile != null)
+        { local_password = "file://${bridge.localPasswordFile}"; }
+      // lib.optionalAttrs (bridge.remotePasswordFile != null)
+        { remote_password = "file://${bridge.remotePasswordFile}"; }
+      // bridge.settings;
+  in name: bridge:
     [
       "connection ${name}"
       "addresses ${lib.concatMapStringsSep " " (a: "${a.address}:${toString a.port}") bridge.addresses}"
     ]
     ++ map (t: "topic ${t}") bridge.topics
-    ++ formatFreeform { } bridge.settings;
+    ++ formatFreeform {} (mergeBridgeSettings bridge);
 
   freeformGlobalKeys = {
     allow_duplicate_messages = 1;
@@ -662,6 +696,7 @@ in
       wantedBy = [ "multi-user.target" ];
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
+      path = [ pkgs.gawk ];
       serviceConfig = {
         Type = "notify";
         NotifyAccess = "main";
@@ -670,7 +705,7 @@ in
         RuntimeDirectory = "mosquitto";
         WorkingDirectory = cfg.dataDir;
         Restart = "on-failure";
-        ExecStart = "${cfg.package}/bin/mosquitto -c ${configFile}";
+        ExecStart = "${cfg.package}/bin/mosquitto -c /run/mosquitto/mosquitto.conf";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
 
         # Credentials
@@ -735,6 +770,8 @@ in
                 (l.settings.keyfile or null)
               ]) cfg.listeners)
               (lib.mapAttrsToList (_: b: [
+                b.localPasswordFile
+                b.remotePasswordFile
                 (b.settings.bridge_cafile or null)
                 (b.settings.bridge_capath or null)
                 (b.settings.bridge_certfile or null)
@@ -743,6 +780,7 @@ in
             ]
           )
         );
+
         RemoveIPC = true;
         RestrictAddressFamilies = [
           "AF_UNIX"
@@ -761,12 +799,18 @@ in
         ];
         UMask = "0077";
       };
-      preStart = lib.concatStringsSep "\n" (
-        lib.imap0 (
-          idx: listener:
-          makePasswordFile (listenerScope idx) listener.users "${cfg.dataDir}/passwd-${toString idx}"
-        ) cfg.listeners
-      );
+      preStart = let
+        passwordFiles = lib.imap0
+          (idx: listener: makePasswordFile (listenerScope idx) listener.users "${cfg.dataDir}/passwd-${toString idx}")
+          cfg.listeners;
+        substitutePasswordFiles = pkgs.writeShellScript "substitute-password-files" ''
+          set -eo pipefail
+          gawk '{ if (match($0,/^([^\s]+password\s)file:\/\/(.+)/,m)) { getline f < m[2]; print m[1] f } else print $0 }' ${configFile} |
+          install -m 400 /dev/stdin /run/mosquitto/mosquitto.conf
+        '';
+      in lib.concatStringsSep
+        "\n"
+        (passwordFiles ++ [substitutePasswordFiles]);
     };
 
     environment.etc = lib.listToAttrs (
