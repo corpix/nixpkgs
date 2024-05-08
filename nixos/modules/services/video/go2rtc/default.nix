@@ -30,6 +30,14 @@ in
 
     package = mkPackageOption pkgs "go2rtc" { };
 
+    dataDir = mkOption {
+      type = types.str;
+      default = "/va/rlib/go2rtc";
+      description = mdDoc ''
+        Directory where go2rtc store it's state.
+      '';
+    };
+
     passwordsFile = mkOption {
       type = types.nullOr types.path;
       default = null;
@@ -108,8 +116,8 @@ in
       after = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
-        DynamicUser = true;
         User = "go2rtc";
+        Group = "go2rtc";
         SupplementaryGroups = [
           # for v4l2 devices
           "video"
@@ -122,5 +130,12 @@ in
         EnvironmentFile = cfg.passwordsFile;
       };
     };
+    users.users.go2rtc = {
+      group = "go2rtc";
+      home = cfg.dataDir;
+      createHome = true;
+      isSystemUser = true;
+    };
+    users.groups.go2rtc = {};
   };
 }
