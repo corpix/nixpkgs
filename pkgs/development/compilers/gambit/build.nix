@@ -4,6 +4,7 @@
   src, version, git-version,
   stampYmd ? 0, stampHms ? 0,
   gambit-support,
+  enableShared,
   optimizationSetting ? "-O1",
   gambit-params ? pkgs.gambit-support.stable-params,
   rev ? git-version }:
@@ -54,10 +55,8 @@ gccStdenv.mkDerivation rec {
     "--enable-c-opt-rts=-O2"
     "--enable-gcc-opts"
     "--enable-trust-c-tco"
-    "--enable-shared"
-    "--enable-absolute-shared-libs" # Yes, NixOS will want an absolute path, and fix it.
     "--enable-openssl"
-    "--enable-dynamic-clib"
+    "--enable-absolute-shared-libs" # Yes, NixOS will want an absolute path, and fix it.
     #"--enable-default-compile-options='(compactness 9)'" # Make life easier on the JS backend
     "--enable-default-runtime-options=${gambit-params.defaultRuntimeOptions}"
     # "--enable-rtlib-debug" # used by Geiser, but only on recent-enough gambit, and messes js runtime
@@ -76,6 +75,9 @@ gccStdenv.mkDerivation rec {
     # "--enable-inline-jumps"
     # "--enable-char-size=1" # default is 4
     # "--enable-march=native" # Nope, makes it not work on machines older than the builder
+  ] ++ lib.optionals (enableShared) [
+    "--enable-shared"
+    "--enable-dynamic-clib"
   ] ++ gambit-params.extraOptions
     # TODO: pick an appropriate architecture to optimize on on x86-64?
     # https://gcc.gnu.org/onlinedocs/gcc-4.8.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options

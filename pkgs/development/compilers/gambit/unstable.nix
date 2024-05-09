@@ -1,4 +1,6 @@
-{ callPackage, fetchFromGitHub, gambit-support }:
+{ stdenv, callPackage, fetchFromGitHub, gambit-support
+, enableShared ? true
+}:
 
 callPackage ./build.nix rec {
   version = "unstable-2023-12-04";
@@ -12,5 +14,6 @@ callPackage ./build.nix rec {
     inherit rev;
     sha256 = "0njcz9krak8nfyk3x6bc6m1rixzsjc1fyzhbz2g3aq5v8kz9mkl5";
   };
+  inherit enableShared;
   gambit-params = gambit-support.unstable-params;
 }
