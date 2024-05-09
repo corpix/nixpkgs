@@ -1,4 +1,7 @@
-{ callPackage, fetchFromGitHub, gambit-unstable, gambit-support, pkgs, gccStdenv }:
+{ pkgs, stdenv, gccStdenv, callPackage, fetchFromGitHub
+, gambit-unstable, gambit-support
+, enableShared ? true
+}:
 
 callPackage ./build.nix rec {
   version = "0.18.1";
@@ -10,7 +13,7 @@ callPackage ./build.nix rec {
     sha256 = "15fh0zqkmnjhan1mgymq5fgbjsh5z9d2v6zjddplqib5zd2s3z6k";
     fetchSubmodules = true;
   };
-  inherit gambit-support;
+  inherit enableShared gambit-support;
   gambit-params = gambit-support.unstable-params;
   gambit-git-version = "4.9.5-78-g8b18ab69";
   gambit-stampYmd = "20231029";

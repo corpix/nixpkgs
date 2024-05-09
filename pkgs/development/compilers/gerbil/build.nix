@@ -1,6 +1,7 @@
 { pkgs, gccStdenv, lib, coreutils,
   openssl, zlib, sqlite,
   version, git-version, src,
+  enableShared,
   gambit-support,
   gambit-git-version,
   gambit-stampYmd,
@@ -56,8 +57,8 @@ stdenv.mkDerivation rec {
     "--prefix=$out/gerbil"
     "--enable-zlib"
     "--enable-sqlite"
-    "--enable-shared"
     "--enable-march=" # Avoid non-portable invalid instructions. Use =native if local build only.
+    (if enableShared then "--enable-shared" else "--disable-shared")
   ];
 
   configurePhase = ''
@@ -93,10 +94,11 @@ stdenv.mkDerivation rec {
     # Build, replacing make by build.sh
     ( cd src && sh build.sh )
 
+  '' + (lib.optionalString enableShared ''
     f=build/lib/libgerbil.so.ldd ; [ -f $f ] && :
     substituteInPlace "$f" --replace '(' \
       '(${lib.strings.concatStrings (map (x: "\"${x}\" " ) extraLdOptions)}'
-
+  '') + ''
     runHook postBuild
   '';
 
@@ -106,7 +108,7 @@ stdenv.mkDerivation rec {
     ./install.sh
     (cd $out/bin ; ln -s ../gerbil/bin/* .)
     runHook postInstall
-  '' + lib.optionalString stdenv.isDarwin ''
+  '' + lib.optionalString (stdenv.isDarwin && enableShared) ''
     libgerbil="$(realpath "$out/gerbil/lib/libgerbil.so")"
     install_name_tool -id "$libgerbil" "$libgerbil"
   '';
