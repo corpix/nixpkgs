@@ -133,7 +133,7 @@ in
         type = types.listOf types.str;
         default = [];
         example = ["-i" "eth0"];
-        description = lib.mdDoc ''
+        description = ''
           Additional command-line arguments for shadowsocks.
         '';
       };
