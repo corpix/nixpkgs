@@ -19,7 +19,7 @@ in {
       enable = mkEnableOption "the yggdrasil system service";
 
       dataDir = mkOption {
-        description = lib.mdDoc "Yggdrasil data directory";
+        description = "Yggdrasil data directory";
         type = path;
         default = "/var/lib/yggdrasil";
       };
@@ -80,14 +80,14 @@ in {
         type = types.nullOr types.str;
         default = "yggdrasil";
         example = "ygg";
-        description = lib.mdDoc "User to run yggdrasil service from.";
+        description = "User to run yggdrasil service from.";
       };
 
       group = mkOption {
         type = types.str;
         default = "yggdrasil";
         example = "wheel";
-        description = lib.mdDoc "Group to grant access to the Yggdrasil control socket. If `null`, only root can access the socket.";
+        description = "Group to grant access to the Yggdrasil control socket. If `null`, only root can access the socket.";
       };
 
       openMulticastPort = mkOption {

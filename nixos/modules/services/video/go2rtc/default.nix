@@ -33,7 +33,7 @@ in
     dataDir = mkOption {
       type = types.str;
       default = "/va/rlib/go2rtc";
-      description = mdDoc ''
+      description = ''
         Directory where go2rtc store it's state.
       '';
     };
@@ -41,7 +41,7 @@ in
     passwordsFile = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = mdDoc ''
+      description = ''
         File with environment variables which will be substituted in configuration file beforre starting.
 
         Could be used to replace passwords in stream urls.
