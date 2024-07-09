@@ -3,7 +3,7 @@
 , fetchurl
 , fetchFromGitHub
 , wrapQtAppsHook
-, python3
+, python311
 , zbar
 , secp256k1
 , enableQt ? true
@@ -12,6 +12,7 @@
 
 let
   version = "4.2.2.1";
+  python = python311;
 
   libsecp256k1_name =
     if stdenv.isLinux then "libsecp256k1.so.0"
@@ -38,7 +39,7 @@ let
 
 in
 
-python3.pkgs.buildPythonApplication {
+python.pkgs.buildPythonApplication {
   pname = "electrum-ltc";
   inherit version;
 
@@ -54,7 +55,7 @@ python3.pkgs.buildPythonApplication {
 
   nativeBuildInputs = lib.optionals enableQt [ wrapQtAppsHook ];
 
-  propagatedBuildInputs = with python3.pkgs; [
+  propagatedBuildInputs = with python.pkgs; [
     aiohttp
     aiohttp-socks
     aiorpcx
@@ -115,8 +116,8 @@ python3.pkgs.buildPythonApplication {
   postInstall = lib.optionalString stdenv.isLinux ''
     # Despite setting usr_share above, these files are installed under
     # $out/nix ...
-    mv $out/${python3.sitePackages}/nix/store"/"*/share $out
-    rm -rf $out/${python3.sitePackages}/nix
+    mv $out/${python.sitePackages}/nix/store"/"*/share $out
+    rm -rf $out/${python.sitePackages}/nix
 
     substituteInPlace $out/share/applications/electrum-ltc.desktop \
       --replace 'Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; electrum-ltc %u"' \
@@ -130,7 +131,7 @@ python3.pkgs.buildPythonApplication {
     wrapQtApp $out/bin/electrum-ltc
   '';
 
-  nativeCheckInputs = with python3.pkgs; [ pytestCheckHook pyaes pycryptodomex ];
+  nativeCheckInputs = with python.pkgs; [ pytestCheckHook pyaes pycryptodomex ];
   buildInputs = lib.optional stdenv.isLinux qtwayland;
 
   pytestFlagsArray = [ "electrum_ltc/tests" ];

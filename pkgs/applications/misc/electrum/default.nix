@@ -3,7 +3,7 @@
 , fetchurl
 , fetchFromGitHub
 , wrapQtAppsHook
-, python3
+, python311
 , zbar
 , secp256k1
 , enableQt ? true
@@ -15,7 +15,7 @@
 let
   version = "4.5.5";
 
-  python = python3.override {
+  python = python311.override {
     self = python;
     packageOverrides = self: super: {
       # Pin ledger-bitcoin to 0.2.1
