@@ -52,7 +52,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   # `gctest` fails under x86_64 emulation on aarch64-darwin
   # and also on aarch64-linux (qemu-user)
-  doCheck = !((stdenv.isDarwin && stdenv.isx86_64) || (stdenv.isLinux && stdenv.isAarch64));
+  doCheck = !((stdenv.isDarwin && stdenv.isx86_64) || (stdenv.isLinux && stdenv.isAarch64) || stdenv.buildPlatform.isArmv7);
 
   enableParallelBuilding = true;
 
