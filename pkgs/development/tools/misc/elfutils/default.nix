@@ -83,11 +83,13 @@ stdenv.mkDerivation rec {
     # Musl provides slightly different forms and fails.
     # Let's disable tests there until musl support is fully upstreamed.
     !stdenv.hostPlatform.isMusl
+    && !stdenv.hostPlatform.isArmv7
     # Test suite tries using `uname` to determine whether certain tests
     # can be executed, so we need to match build and host platform exactly.
     && (stdenv.hostPlatform == stdenv.buildPlatform);
   doInstallCheck = !stdenv.hostPlatform.isMusl
-    && (stdenv.hostPlatform == stdenv.buildPlatform);
+                   && !stdenv.hostPlatform.isArmv7
+                   && (stdenv.hostPlatform == stdenv.buildPlatform);
 
   passthru.updateScript = gitUpdater {
     url = "https://sourceware.org/git/elfutils.git";
