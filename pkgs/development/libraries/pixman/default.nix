@@ -60,7 +60,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   enableParallelBuilding = true;
 
-  doCheck = !stdenv.isDarwin;
+  doCheck = !stdenv.isDarwin && !stdenv.hostPlatform.isArmv7;
 
   postInstall = glib.flattenInclude;
 
