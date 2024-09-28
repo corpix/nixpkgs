@@ -436,7 +436,7 @@ let
         '';
       };
 
-      settings = mkOption {
+      settings = lib.mkOption {
         type = submodule {
           freeformType = attrsOf optionType;
         };
@@ -457,9 +457,9 @@ let
 
   formatBridge = let
     mergeBridgeSettings = bridge:
-      optionalAttrs (bridge.localPasswordFile != null)
+      lib.optionalAttrs (bridge.localPasswordFile != null)
         { local_password = "file://${bridge.localPasswordFile}"; }
-      // optionalAttrs (bridge.remotePasswordFile != null)
+      // lib.optionalAttrs (bridge.remotePasswordFile != null)
         { remote_password = "file://${bridge.remotePasswordFile}"; }
       // bridge.settings;
   in name: bridge:
