@@ -80,14 +80,14 @@ in {
       };
 
       user = mkOption {
-        type = types.nullOr types.str;
+        type = nullOr str;
         default = "yggdrasil";
         example = "ygg";
         description = "User to run yggdrasil service from.";
       };
 
       group = mkOption {
-        type = types.str;
+        type = str;
         default = "yggdrasil";
         example = "wheel";
         description = "Group to grant access to the Yggdrasil control socket. If `null`, only root can access the socket.";
@@ -179,12 +179,12 @@ in {
 
           preStart =
             (if settingsProvided || configFileProvided || cfg.persistentKeys
-             then concatStringsSep "\n" [
+             then lib.concatStringsSep "\n" [
                "set -o pipefail"
                "{"
-               "echo ${optionalString settingsProvided "'${builtins.toJSON cfg.settings}'"}"
-               (optionalString configFileProvided "cat ${cfg.configFile}")
-               (optionalString cfg.persistentKeys "cat ${keysPath}")
+               "echo ${lib.optionalString settingsProvided "'${builtins.toJSON cfg.settings}'"}"
+               (lib.optionalString configFileProvided "cat ${cfg.configFile}")
+               (lib.optionalString cfg.persistentKeys "cat ${keysPath}")
                "} | ${pkgs.jq}/bin/jq -s add | ${binYggdrasil} -normaliseconf -useconf"
              ]
              else "${binYggdrasil} -genconf") + " > /run/yggdrasil/yggdrasil.conf";
