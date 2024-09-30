@@ -1,0 +1,13 @@
+diff --git a/Makefile b/Makefile
+index 7bda1647..85948c1e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -17,7 +17,7 @@ APPS_PATH = /usr/share/applications
+ MIN_PY3_MINOR_VERSION := 5
+ PY3_MINOR_VERSION := $(shell python3 --version | cut -d'.' -f2)
+ 
+-ifneq ($(MIN_PY3_MINOR_VERSION), $(firstword $(sort $(PY3_MINOR_VERSION) $(MIN_PY3_MINOR_VERSION))))
++ifneq ($(MIN_PY3_MINOR_VERSION), $(shell echo -e '$(PY3_MINOR_VERSION)\n$(MIN_PY3_MINOR_VERSION)' | sort -n | head -n1))
+     $(info Current python version is 3.$(PY3_MINOR_VERSION))
+     $(error You must have at least 3.$(MIN_PY3_MINOR_VERSION) installed)
+ endif
