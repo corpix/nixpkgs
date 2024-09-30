@@ -40,6 +40,7 @@ buildPythonApplication rec {
     rev = "ebf5cb9e3094362c4b0774a54cf119559c02211d"; # beta branch as of 2022-02-02
     hash = "sha256-QKkBPEM+HVYmSZ83b4JRmOmCMp7C3EUqbJKPqUXMiKE=";
   };
+  patches = [ ./python-version.patch ];
 
   format = "other";
 
