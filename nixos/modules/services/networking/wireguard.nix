@@ -544,9 +544,9 @@ let
     nameValuePair "wireguard-${name}"
       {
         description = "WireGuard Tunnel - ${name}";
-        requires = [ "network-online.target" ];
-        after = [ "network.target" "network-online.target" ];
-        wantedBy = [ "multi-user.target" ];
+        after = [ "network-pre.target" ];
+        wants = [ "network.target" ];
+        before = [ "network.target" ];
         environment.DEVICE = name;
         path = with pkgs; [ kmod iproute2 wgPackages.${values.type} ];
 
