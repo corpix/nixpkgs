@@ -58,6 +58,12 @@ in
       description = "Port the OnlyOffice example server should listen on.";
     };
 
+    configureNginx = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Automatically configure Nginx to serve OnlyOffice on specified hostname.";
+    };
+
     postgresHost = lib.mkOption {
       type = lib.types.str;
       default = "/run/postgresql";
@@ -97,7 +103,7 @@ in
 
   config = lib.mkIf cfg.enable {
     services = {
-      nginx = {
+      nginx = lib.mkIf cfg.configureNginx {
         enable = lib.mkDefault true;
         # misses text/csv, font/ttf, application/x-font-ttf, application/rtf, application/wasm
         recommendedGzipSettings = lib.mkDefault true;
