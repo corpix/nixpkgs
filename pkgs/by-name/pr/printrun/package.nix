@@ -27,6 +27,19 @@ python3Packages.buildPythonApplication rec {
   propagatedBuildInputs = with python3Packages; [
     appdirs
     platformdirs
+    cython
+    dbus-python
+    numpy
+    six
+    wxpython
+    psutil
+    pyglet
+    pyopengl
+    pyserial
+    cffi
+    cairosvg
+    lxml
+    puremagic
   ];
 
   build-system = with python3Packages; [
