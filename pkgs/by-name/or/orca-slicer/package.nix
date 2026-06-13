@@ -57,6 +57,12 @@ let
           "--enable-secretstore"
         ];
       });
+
+  # Workaround missing preview due to EGL
+  # https://github.com/NixOS/nixpkgs/issues/513195
+  glew' = glew.override {
+    enableEGL = false;
+  };
 in
 # Build with clang even on Linux, because GCC uses absolutely obscene amounts of memory
 # on this particular code base (OOM with 32GB memory and --cores 16 on GCC, succeeds
@@ -103,7 +109,7 @@ clangStdenv.mkDerivation (finalAttrs: {
     expat
     ffmpeg
     gcc-unwrapped
-    glew
+    glew'
     glfw
     glib
     glib-networking
@@ -210,7 +216,7 @@ clangStdenv.mkDerivation (finalAttrs: {
     gappsWrapperArgs+=(
       --prefix LD_LIBRARY_PATH : "$out/lib:${
         lib.makeLibraryPath [
-          glew
+          glew'
         ]
       }"
       --set WEBKIT_DISABLE_COMPOSITING_MODE 1
